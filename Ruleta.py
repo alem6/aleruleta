@@ -1,1 +1,1 @@
-print("vienvenido a la Ruleta de la fortuna")
+print("estamos en consecuencias mas graves")
