@@ -30,15 +30,17 @@ for i in range(1 , cantVeces + 1):
 ##     # Para cada frecuencia relativa la mostramos
 ##     print("La frecuencia relativa es de " + str(f))
 
-if nroVecesGanados > 0:
-    altura = 1 / 37
-    #print(altura)
-    plt.axhline(altura)
-    plt.ylabel("Frecuencia")
-    plt.xlabel("Numero de tiradas")
-    plt.axis([ 0 , cantVeces , 0 , 1])
-    #frecRelativas = [0.02, 0.03, 0.04]
-    plt.plot(frecRelativas, "-r")# [1 , 2 , 3 , 4]
-    plt.show()
 
-print(frecRelativas[-1])
+altura = 1 / 37
+#print(altura)
+plt.axhline(altura)
+plt.ylabel("Frecuencia")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 1])
+#frecRelativas = [0.02, 0.03, 0.04]
+plt.plot(frecRelativas, "-r")# [1 , 2 , 3 , 4]
+#plt.show()
+try:
+    plt.savefig("graficosRuleta.pdf")
+except:
+    print("Ha ocurrido un error")
