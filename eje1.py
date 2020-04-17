@@ -2,6 +2,9 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import Counter
+import seaborn as sns
+import math
+
 # Declaro variables
 nroVecesGanados = 0
 cantTiros = 0
@@ -15,7 +18,8 @@ moda = []
 mediana = []
 valoresAcumulados = 0
 acumDesvio = 0
-
+cantItemX = []
+cantItemY = []
 # Comienza el programa
 print('\tJUEGO DE RULETA\t ')
 while True:
@@ -46,19 +50,18 @@ for i in range(1 , cantVeces + 1):
     mediana.append(np.median(resultados))
 
     
-
-## [5, 3, 4, 4]
-## Frecuencia relativa,  valor promedio, valor del desvio y valor de la varianza
-## [3 , 8 , 19, 3 ] 2 veces de las 4 veces que tiramos salio 3... fr(3) = 2/4
-
-print(moda)
+# Pongo estilo por default de seaborn
+sns.set()
+# Menu para graficar
 opcion = input("""Que desea graficar?
     a - Fr
     b - Promedio
     c - Desvio
     d - Varianza
     e - Moda
-    f - Mediana""")
+    f - Mediana
+    g - Histograma de cantidades\n""")
+
 if opcion == "a":
     altura = 1 / 37
     #print(altura)
@@ -72,8 +75,8 @@ if opcion == "a":
     #plt.savefig("frecuenciaFiguras.pdf")
     plt.show()
 
-if opcion == "b":
-    altura = np.median(resultados)
+elif opcion == "b":
+    altura = np.mean(resultados)
     plt.axhline(altura)
     plt.ylabel("VP(Valor Promedio de las tiradas")
     plt.xlabel("Numero de tiradas")
@@ -83,7 +86,7 @@ if opcion == "b":
     plt.show()
     #plt.savefig("promedioFiguras.pdf")
 
-if opcion == "c":
+elif opcion == "c":
     altura = np.std(resultados)
     plt.axhline(altura)
     plt.ylabel("VD(Valor del Desvio)")
@@ -95,7 +98,7 @@ if opcion == "c":
     plt.show()
 
 
-if opcion == "d":
+elif opcion == "d":
     altura = np.var(resultados)
     plt.axhline(altura)
     plt.ylabel("VV(Valor de la Varianza)")
@@ -106,8 +109,7 @@ if opcion == "d":
     print(varianza[-1])
     plt.show()
 
-if opcion == "e":
-    
+elif opcion == "e":    
     plt.ylabel("Moda")
     plt.xlabel("Numero de tiradas")
     plt.axis([ 0 , cantVeces , 0 , 36])
@@ -115,19 +117,29 @@ if opcion == "e":
     #plt.savefig("varianzaFiguras.pdf")
     plt.show()
 
-if opcion == "f":
-    
+elif opcion == "f":
+    altura = np.median(resultados)
+    plt.axhline(altura)
     plt.ylabel("Mediana")
     plt.xlabel("Numero de tiradas")
     plt.axis([ 0 , cantVeces , 0 , 36])
     plt.plot(mediana, "-r")# [1 , 2 , 3 , 4]
     #plt.savefig("varianzaFiguras.pdf")
     plt.show()
-#if opcion == "g":
-#    
-#    plt.ylabel("Moda")
-#    plt.xlabel("Numero de tiradas")
-#    plt.axis([ 0 , cantVeces , 0 , 36])
-#    plt.plot(moda, "-r")# [1 , 2 , 3 , 4]
-#    #plt.savefig("varianzaFiguras.pdf")
-#    plt.show()
+
+elif opcion == "g":
+    counter = Counter(resultados)
+    counter = sorted(counter.items())
+    for c in counter:
+        cantItemX.append(c[0])
+        cantItemY.append(c[1])
+    print(cantItemX)
+    print(cantItemY)
+    plt.bar(cantItemX,cantItemY,label = "Cant Apariciones")
+    plt.xlabel("Numbers")
+    plt.ylabel("Quantity")
+    plt.legend()
+    plt.axis([ 0 , 36 , 0 , max(cantItemY)])
+    plt.show()
+    
+
