@@ -1,6 +1,7 @@
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+from collections import Counter
 # Declaro variables
 nroVecesGanados = 0
 cantTiros = 0
@@ -10,8 +11,10 @@ frecRelativas = []
 media = []
 desvio = []
 varianza = []
+moda = []
+mediana = []
 valoresAcumulados = 0
-acumDesvio=0
+acumDesvio = 0
 
 # Comienza el programa
 print('\tJUEGO DE RULETA\t ')
@@ -26,28 +29,36 @@ for i in range(1 , cantVeces + 1):
     
     if (nume == nroaleatorio):
         nroVecesGanados += 1 # 1
-         
-    frecRelativas.append(nroVecesGanados / i)
-    media.append(valoresAcumulados/i)
     resultados.append(nroaleatorio)
+    #Calcula Frecuencia Relativa     
+    frecRelativas.append(nroVecesGanados / i)
+    #Calcula medias
+    media.append(valoresAcumulados/i)    
+    # Calcula Desvio Estandar
     desvio.append(np.std(resultados))
+    # Calcula Varianza
     varianza.append(np.var(resultados))
+    # Calcula Moda
+    c = Counter(resultados)
+    mod = c.most_common(1)
+    moda.append(mod[0][0])
+    # Calcula mediana
+    mediana.append(np.median(resultados))
+
     
 
 ## [5, 3, 4, 4]
 ## Frecuencia relativa,  valor promedio, valor del desvio y valor de la varianza
 ## [3 , 8 , 19, 3 ] 2 veces de las 4 veces que tiramos salio 3... fr(3) = 2/4
-## for f in frecRelativas:
-##     # Para cada frecuencia relativa la mostramos
-##     print("La frecuencia relativa es de " + str(f))
 
-# (0,1,2,3,4,5,6,...,36)/37
-
+print(moda)
 opcion = input("""Que desea graficar?
     a - Fr
     b - Promedio
     c - Desvio
-    d - Varianza""")
+    d - Varianza
+    e - Moda
+    f - Mediana""")
 if opcion == "a":
     altura = 1 / 37
     #print(altura)
@@ -95,3 +106,28 @@ if opcion == "d":
     print(varianza[-1])
     plt.show()
 
+if opcion == "e":
+    
+    plt.ylabel("Moda")
+    plt.xlabel("Numero de tiradas")
+    plt.axis([ 0 , cantVeces , 0 , 36])
+    plt.plot(moda, "-r")# [1 , 2 , 3 , 4]
+    #plt.savefig("varianzaFiguras.pdf")
+    plt.show()
+
+if opcion == "f":
+    
+    plt.ylabel("Mediana")
+    plt.xlabel("Numero de tiradas")
+    plt.axis([ 0 , cantVeces , 0 , 36])
+    plt.plot(mediana, "-r")# [1 , 2 , 3 , 4]
+    #plt.savefig("varianzaFiguras.pdf")
+    plt.show()
+#if opcion == "g":
+#    
+#    plt.ylabel("Moda")
+#    plt.xlabel("Numero de tiradas")
+#    plt.axis([ 0 , cantVeces , 0 , 36])
+#    plt.plot(moda, "-r")# [1 , 2 , 3 , 4]
+#    #plt.savefig("varianzaFiguras.pdf")
+#    plt.show()
