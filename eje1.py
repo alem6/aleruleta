@@ -5,7 +5,7 @@ import numpy as np
 nroVecesGanados = 0
 cantTiros = 0
 resultados = []
-cantVeces = 50
+cantVeces = int(input("Cuantas iteraciones desea realizar?"))
 frecRelativas = []
 media = []
 desvio = []
@@ -43,7 +43,12 @@ for i in range(1 , cantVeces + 1):
 
 # (0,1,2,3,4,5,6,...,36)/37
 
-if nroVecesGanados > 0:
+opcion = input("""Que desea graficar?
+    a - Fr
+    b - Promedio
+    c - Desvio
+    d - Varianza""")
+if opcion == "a":
     altura = 1 / 37
     #print(altura)
     plt.axhline(altura)
@@ -56,7 +61,7 @@ if nroVecesGanados > 0:
     #plt.savefig("frecuenciaFiguras.pdf")
     plt.show()
 
-if nroVecesGanados > 0:
+if opcion == "b":
     altura = np.median(resultados)
     plt.axhline(altura)
     plt.ylabel("VP(Valor Promedio de las tiradas")
@@ -67,7 +72,7 @@ if nroVecesGanados > 0:
     plt.show()
     #plt.savefig("promedioFiguras.pdf")
 
-if nroVecesGanados > 0:
+if opcion == "c":
     altura = np.std(resultados)
     plt.axhline(altura)
     plt.ylabel("VD(Valor del Desvio)")
@@ -79,7 +84,7 @@ if nroVecesGanados > 0:
     plt.show()
 
 
-if nroVecesGanados > 0:
+if opcion == "d":
     altura = np.var(resultados)
     plt.axhline(altura)
     plt.ylabel("VV(Valor de la Varianza)")
