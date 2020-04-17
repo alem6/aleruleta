@@ -133,13 +133,17 @@ elif opcion == "g":
     for c in counter:
         cantItemX.append(c[0])
         cantItemY.append(c[1])
-    print(cantItemX)
-    print(cantItemY)
-    plt.bar(cantItemX,cantItemY,label = "Cant Apariciones")
-    plt.xlabel("Numbers")
-    plt.ylabel("Quantity")
-    plt.legend()
-    plt.axis([ 0 , 36 , 0 , max(cantItemY)])
-    plt.show()
+    if len(cantItemX) < 37:
+        print("No salieron todos los numeros de la ruleta, falta implementar")
+        
+    else:
+        print(cantItemX)
+        print(cantItemY)
+        plt.bar(cantItemX,cantItemY,label = "Cant Apariciones")
+        plt.xlabel("Numbers")
+        plt.ylabel("Quantity")
+        plt.legend()
+        plt.axis([ 0 , 36 , 0 , max(cantItemY)])
+        plt.show()
     
 
