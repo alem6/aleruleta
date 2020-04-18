@@ -20,6 +20,8 @@ valoresAcumulados = 0
 acumDesvio = 0
 cantItemX = []
 cantItemY = []
+quartil1=[]
+
 # Comienza el programa
 print('\tJUEGO DE RULETA\t ')
 while True:
@@ -50,6 +52,8 @@ for i in range(1 , cantVeces + 1):
     mediana.append(np.median(resultados))
 
     
+
+        
 # Pongo estilo por default de seaborn
 sns.set()
 # Menu para graficar
@@ -60,7 +64,8 @@ opcion = input("""Que desea graficar?
     d - Varianza
     e - Moda
     f - Mediana
-    g - Histograma de cantidades\n""")
+    g - Histograma de cantidades
+    h - Quartil \n""")
 
 if opcion == "a":
     altura = 1 / 37
@@ -145,5 +150,19 @@ elif opcion == "g":
         plt.legend()
         plt.axis([ 0 , 36 , 0 , max(cantItemY)])
         plt.show()
-    
+
+elif opcion == "h":    
+    plt.ylabel('Quartiles')
+    quartil1=(np.quantile(resultados,0.25), np.quantile(resultados,0.50), np.quantile(resultados,0.75))
+    # Creando el objeto figura
+    fig = plt.figure(1, figsize=(9, 6))
+    #  Creando el subgrafico
+    ax = fig.add_subplot(111)
+    # creando el grafico de cajas
+    bp = ax.boxplot(quartil1)
+    for flier in bp['fliers']:
+       flier.set(marker='o', color='blue', alpha=0.5)
+    #plt.savefig("varianzaFiguras.pdf")
+    print(quartil1)
+    plt.show()
 
