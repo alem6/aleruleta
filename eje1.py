@@ -58,56 +58,68 @@ for i in range(1 , cantVeces + 1):
 sns.set()
 
 #Grafica de Frecuencia Relativa
-#altura = 1 / 37
-#plt.axhline(altura)
-#plt.ylabel("FR(Frecuencia Relativa)")
-#plt.xlabel("Numero de tiradas")
-#plt.axis([ 0 , cantVeces , 0 , 1])
-#plt.plot(frecRelativas, "-r")
+altura = 1 / 37
+plt.axhline(altura)
+plt.ylabel("FR(Frecuencia Relativa)")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 1])
+plt.plot(frecRelativas, "-r")
 #plt.show()
-#
-##Grafica de Frecuencia Relativa
-#altura = np.mean(resultados)
-#plt.axhline(altura)
-#plt.ylabel("VP(Valor Promedio de las tiradas")
-#plt.xlabel("Numero de tiradas")
-#plt.axis([ 0 , cantVeces , 0 , 200])
-#plt.plot(media, "-r")
+plt.savefig("frecRelativa.png")
+plt.clf()
+
+#Grafica de Frecuencia Relativa
+altura = np.mean(resultados)
+plt.axhline(altura)
+plt.ylabel("VP(Valor Promedio de las tiradas")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 60])
+plt.plot(media, "-r")
 #plt.show()
-#
-##Grafica de Desvio Estandar
-#altura = np.std(resultados)
-#plt.axhline(altura)
-#plt.ylabel("VD(Valor del Desvio)")
-#plt.xlabel("Numero de tiradas")
-#plt.axis([ 0 , cantVeces , 0 , 200])
-#plt.plot(desvio, "-r")
+plt.savefig("promedio.png")
+plt.clf()
+
+#Grafica de Desvio Estandar
+altura = np.std(resultados)
+plt.axhline(altura)
+plt.ylabel("VD(Valor del Desvio)")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 40])
+plt.plot(desvio, "-r")
 #plt.show()
-#
-##Grafica de Varianza
-#altura = np.var(resultados)
-#plt.axhline(altura)
-#plt.ylabel("VV(Valor de la Varianza)")
-#plt.xlabel("Numero de tiradas")
-#plt.axis([ 0 , cantVeces , 0 , 200])
-#plt.plot(varianza, "-r")
+plt.savefig("desvio.png")
+plt.clf()
+
+#Grafica de Varianza
+altura = np.var(resultados)
+plt.axhline(altura)
+plt.ylabel("VV(Valor de la Varianza)")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 200])
+plt.plot(varianza, "-r")
 #plt.show()
+plt.savefig("varianza.png")
+plt.clf()
 
 #Grafica de la Moda
-#plt.ylabel("Moda")
-#plt.xlabel("Numero de tiradas")
-#plt.axis([ 0 , cantVeces , 0 , 36])
-#plt.plot(moda, "-r")
+plt.ylabel("Moda")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 37])
+plt.plot(moda, "-r")
 #plt.show()
-#
-##Grafica de la Mediana
-#altura = np.median(resultados)
-#plt.axhline(altura)
-#plt.ylabel("Mediana")
-#plt.xlabel("Numero de tiradas")
-#plt.axis([ 0 , cantVeces , 0 , 36])
-#plt.plot(mediana, "-r")
+plt.savefig("moda.png")
+plt.clf()
+
+#Grafica de la Mediana
+altura = np.median(resultados)
+plt.axhline(altura)
+plt.ylabel("Mediana")
+plt.xlabel("Numero de tiradas")
+plt.axis([ 0 , cantVeces , 0 , 36])
+plt.plot(mediana, "-r")
+plt.savefig("mediana.png")
 #plt.show()
+plt.clf()
 
 #Grafica de histograma de cantidad de apariciones de cada numero
 counter = Counter(resultados)
@@ -136,20 +148,23 @@ plt.xlabel("Numbers")
 plt.ylabel("Quantity")
 plt.legend()
 plt.axis([ 0 , 36 , 0 , max(cantItemY)])
-plt.show()
-
-## Grafica de caja y bigotes
-#plt.ylabel('Quartiles')
-#quartil1=(np.quantile(resultados,0.25), np.quantile(resultados,0.50), np.quantile(resultados,0.75))
-## Creando el objeto figura
-#fig = plt.figure(1, figsize=(9, 6))
-##  Creando el subgrafico
-#ax = fig.add_subplot(111)
-## creando el grafico de cajas
-#bp = ax.boxplot(quartil1)
-#for flier in bp['fliers']:
-#   flier.set(marker='o', color='blue', alpha=0.5)
-##plt.savefig("varianzaFiguras.pdf")
-#print(quartil1)
 #plt.show()
-#
+plt.savefig("histograma.png")
+plt.clf()
+
+# Grafica de caja y bigotes
+plt.ylabel('Quartiles')
+quartil1=(np.quantile(resultados,0.25), np.quantile(resultados,0.50), np.quantile(resultados,0.75))
+# Creando el objeto figura
+fig = plt.figure(1, figsize=(9, 6))
+#  Creando el subgrafico
+ax = fig.add_subplot(111)
+# creando el grafico de cajas
+bp = ax.boxplot(quartil1)
+for flier in bp['fliers']:
+   flier.set(marker='o', color='blue', alpha=0.5)
+plt.savefig("caja.png")
+print(quartil1)
+#plt.show()
+plt.clf()
+
