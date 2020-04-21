@@ -1,1 +1,0 @@
-print("repasando git hoy")
