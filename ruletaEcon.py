@@ -18,45 +18,43 @@ def opcionMenu():
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
         Entry(opciones , textvariable = apuesta ).pack()
 
-        Button(opciones , command = apostar).pack()
+        Button(opciones , command = apostar , text = "Apostar").pack()
 
     elif opcion.get() == 2: # Color
         #Limpia
-        Label(opciones , text = "Ingrese el color al que desea apostar").pack()
-        Entry(opciones , textvariable = numero).pack()
+        Label(opciones , text = "Ingrese el color al que desea apostar (R ,N)").pack()
+        Entry(opciones , textvariable = color).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
         Entry(opciones , textvariable = apuesta).pack()
 
-        Button(opciones , command = apostar).pack()
+        Button(opciones , command = apostar , text = "Apostar").pack()
 
 
     elif opcion.get() == 3: # Paridad
         #Limpia
-        Label(opciones , text = "Ingrese  al que desea apostar").pack()
-        Entry(opciones , textvariable = numero).pack()
+        Label(opciones , text = "Ingrese si desea apostar a par o impar (I , P)").pack()
+        Entry(opciones , textvariable = paridad).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
         Entry(opciones , textvariable = apuesta).pack()
 
-        Button(opciones , command = apostar).pack()
+        Button(opciones , command = apostar, text = "Apostar").pack()
         
     
 def apostar():
     cantVeces = 100
     modo = opcion.get()
-    print(modo)
+    #print(modo)
     try:
-        num = float(numero.get())
-        print(numero)
+        num = int(numero.get())
+        print(num)
     except:
         pass
+
+    col = str(color.get())
+    print(col)
     try:
-        color = color.get()
-        print(color)
-    except:
-        pass
-    try:
-        paridad = paridad.get()
-        print(paridad)
+        par = str(paridad.get())
+        print(par)
     except:
         pass
     
@@ -80,7 +78,7 @@ root.title("Ruleta")
 opcion  = IntVar()
 numero  = StringVar()
 apuesta = StringVar()
-color = StringVar()
+color   = StringVar()
 paridad = StringVar()
 
 
