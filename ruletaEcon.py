@@ -70,7 +70,7 @@ def apostar():
         #gano = determinarGanado(nroaleatorio , numero, color, paridad , apuesta, modo)
         #perdio = determinarPerdido(nroaleatorio , numero, color, paridad, apuesta, modo)
 
-
+#region Menu
 #Menu
 root = Tk()
 root.title("Ruleta")
@@ -102,3 +102,4 @@ opciones.pack()
 #Loop principal
 root.mainloop()
 
+#endregion
