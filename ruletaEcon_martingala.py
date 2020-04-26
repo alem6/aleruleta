@@ -28,18 +28,18 @@ def opcionMenu():
     if opcion.get() == 1: # Numero
         #Limpia        
         Label(opciones , text = "Ingrese el numero al que desea apostar").pack()
-        Entry(opciones , textvariable = numero ).pack()
+        Entry(opciones , textvariable = num ).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apuesta ).pack()
+        Entry(opciones , textvariable = apue ).pack()
 
         Button(opciones , command = apostar , text = "Apostar").pack()
 
     elif opcion.get() == 2: # Color
         #Limpia
         Label(opciones , text = "Ingrese el color al que desea apostar (R ,N)").pack()
-        Entry(opciones , textvariable = color).pack()
+        Entry(opciones , textvariable = col).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apuesta).pack()
+        Entry(opciones , textvariable = apue).pack()
 
         Button(opciones , command = apostar , text = "Apostar").pack()
 
@@ -47,15 +47,16 @@ def opcionMenu():
     elif opcion.get() == 3: # Paridad
         #Limpia
         Label(opciones , text = "Ingrese si desea apostar a par o impar (I , P)").pack()
-        Entry(opciones , textvariable = paridad).pack()
+        Entry(opciones , textvariable = par).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apuesta).pack()
+        Entry(opciones , textvariable = apue).pack()
 
         Button(opciones , command = apostar, text = "Apostar").pack()
         
 
 def getGano(modo, numero_random , apuesta , color_apostado , numero_apostado , paridad_apostado):
     gano = 0
+
     if modo == 1: # Numero
         if numero_apostado == numero_random:
             gano = apuesta * 36     
@@ -68,9 +69,9 @@ def getGano(modo, numero_random , apuesta , color_apostado , numero_apostado , p
     
     return gano
 
-def apostar():
+def apostar(): 
     cantVeces = 100
-    modo = opcion.get()
+    modo = opcion.get()  # 1 2 3
     plata = 100
 
  # Busca los parametros de la apuesta que puede   
@@ -78,29 +79,49 @@ def apostar():
     try:
         numero = int(num.get())
     except:
-        pass
+        numero = 0
     try:
         color = str(col.get())
     except:
-        pass
+        color = ""
     try:
         paridad = str(par.get())
     except:
-        pass
+        paridad = ""
     try:
         apuesta_original = int(apue.get())
         apuesta          = apuesta_original
     except:
-        pass
+        print("Tiene que ingresar una apuesta")
     
 
+    altura = plata 
+    cant_capital = []
 
     for i in range(1 , cantVeces + 1):
         nroaleatorio = random.randrange( 00, 37)
         
         gano = getGano(modo , nroaleatorio , apuesta , color , numero , paridad)
-        if gano == 0 : #hace algo
-            pass
+        
+        if gano == 0 : 
+            plata -= apuesta
+            
+            apuesta *= 2
+        if gano > 0:
+            plata += apuesta
+            apuesta = apuesta_original
+        cant_capital.append(plata)
+    print(cant_capital)
+    #Grafica de Capital
+    
+    plt.axhline(altura)
+    plt.ylabel("CC(Cantidad de Capital)")
+    plt.xlabel("Numero de tiradas")
+    plt.axis([ 0 , cantVeces , 0 , 500])
+    plt.plot(cant_capital, "-r")
+    plt.show()
+
+            
          
 
 #region Menu
