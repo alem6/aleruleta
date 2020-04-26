@@ -6,8 +6,7 @@ import seaborn as sns
 import math
 from tkinter import *
 
-def asignar():
-    pass
+
 def opcionMenu():
     for i in opciones.pack_slaves():
             i.destroy() 
