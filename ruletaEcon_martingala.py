@@ -73,7 +73,7 @@ def apostar():
     cantVeces = 100
     modo = opcion.get()  # 1 2 3
     plata = 100
-
+    infinito = True
  # Busca los parametros de la apuesta que puede   
 
     try:
@@ -103,15 +103,23 @@ def apostar():
         
         gano = getGano(modo , nroaleatorio , apuesta , color , numero , paridad)
         
-        if gano == 0 : 
-            plata -= apuesta
-            
-            apuesta *= 2
+        if gano == 0 :
+            if not infinito: 
+                plata -= apuesta
+                if plata >= apuesta * 2:
+                    apuesta *= 2
+                if plata < apuesta * 2:
+                    apuesta = plata
+                if plata <= 0 :
+                    print("Has perdido")
+                    break
         if gano > 0:
-            plata += apuesta
+            plata += gano
             apuesta = apuesta_original
         cant_capital.append(plata)
-    print(cant_capital)
+        print(plata)
+
+    
     #Grafica de Capital
     
     plt.axhline(altura)
