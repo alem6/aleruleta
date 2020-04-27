@@ -6,6 +6,29 @@ import seaborn as sns
 import math
 from tkinter import *
 
+def getNthFib(n):
+	if n == 1:
+		return 1
+	if n == 2:
+		return 2
+	if n > 2:
+		return getNthFib(n-1) + getNthFib(n-2)
+
+def getColor(numero):
+    rojos = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+    negros = [2, 4, 6, 8, 10 , 11 , 13 , 15 , 17 ,20 , 22 , 24 ,26, 28, 29 , 31 , 33 , 35]
+    if numero == 0: 
+        return "V"
+    if numero in rojos:
+        return "R"
+    else:
+        return "N"
+
+def getParidad(numero):
+    if (numero % 2 == 0): 
+        return "P" 
+    else:
+        return "I"
 
 def opcionMenu():
     for i in opciones.pack_slaves():
@@ -13,18 +36,18 @@ def opcionMenu():
     if opcion.get() == 1: # Numero
         #Limpia        
         Label(opciones , text = "Ingrese el numero al que desea apostar").pack()
-        Entry(opciones , textvariable = numero ).pack()
+        Entry(opciones , textvariable = num ).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apuesta ).pack()
+        Entry(opciones , textvariable = apue ).pack()
 
         Button(opciones , command = apostar , text = "Apostar").pack()
 
     elif opcion.get() == 2: # Color
         #Limpia
         Label(opciones , text = "Ingrese el color al que desea apostar (R ,N)").pack()
-        Entry(opciones , textvariable = color).pack()
+        Entry(opciones , textvariable = col).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apuesta).pack()
+        Entry(opciones , textvariable = apue).pack()
 
         Button(opciones , command = apostar , text = "Apostar").pack()
 
@@ -32,42 +55,89 @@ def opcionMenu():
     elif opcion.get() == 3: # Paridad
         #Limpia
         Label(opciones , text = "Ingrese si desea apostar a par o impar (I , P)").pack()
-        Entry(opciones , textvariable = paridad).pack()
+        Entry(opciones , textvariable = par).pack()
         Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apuesta).pack()
+        Entry(opciones , textvariable = apue).pack()
 
         Button(opciones , command = apostar, text = "Apostar").pack()
         
-    
-def apostar():
-    cantVeces = 100
-    modo = opcion.get()
-    #print(modo)
-    try:
-        num = int(numero.get())
-        print(num)
-    except:
-        pass
 
-    col = str(color.get())
-    print(col)
+def getGano(modo, numero_random , apuesta , color_apostado , numero_apostado , paridad_apostado):
+    gano = 0
+
+    if modo == 1: # Numero
+        if numero_apostado == numero_random:
+            gano = apuesta * 36     
+    elif modo == 2: #Color
+        if color_apostado == getColor(numero_random):
+            gano = apuesta * 2
+    elif modo == 3: #Par/Impar
+        if paridad_apostado == getParidad(numero_random):
+            gano = apuesta * 2
+    
+    return gano
+
+def apostar(): 
+    cantVeces = 1000
+    modo = opcion.get()  # 1 2 3
+    plata = 100
+    infinito = False
+    debug = False
+ # Busca los parametros de la apuesta que puede   
+
     try:
-        par = str(paridad.get())
-        print(par)
+        numero = int(num.get())
     except:
-        pass
+        numero = 0
+    try:
+        color = str(col.get())
+    except:
+        color = ""
+    try:
+        paridad = str(par.get())
+    except:
+        paridad = ""
     
-    
-    
-    
-    
-    
-    print()
+    n = 1
+    apuesta = getNthFib(n)
+    altura = plata
+    cant_capital = []
 
     for i in range(1 , cantVeces + 1):
-        nroaleatorio = random.randrange( 00, 37) 
-        #gano = determinarGanado(nroaleatorio , numero, color, paridad , apuesta, modo)
-        #perdio = determinarPerdido(nroaleatorio , numero, color, paridad, apuesta, modo)
+        nroaleatorio = random.randrange( 00, 37)
+        apuesta = getNthFib(n)
+        if apuesta > plata: 
+            print("HAS PERDIDO")
+            break
+        gano = getGano(modo , nroaleatorio , apuesta , color , numero , paridad)
+        
+        if gano == 0:
+            n += 1
+            if not infinito:
+                plata -= apuesta
+        if gano > 0:
+            plata += gano
+            if n > 3:
+                n -= 2
+            else:
+                n = 1
+
+        cant_capital.append(plata)
+        if debug : print(f"Aposto {apuesta} y tiene {plata}")
+        
+
+    
+    #Grafica de Capital
+    
+    plt.axhline(altura)
+    plt.ylabel("CC(Cantidad de Capital)")
+    plt.xlabel("Numero de tiradas")
+    plt.axis([ 0 , cantVeces , 0 , max(cant_capital)])
+    plt.plot(cant_capital, "-r")
+    plt.show()
+
+            
+         
 
 #region Menu
 #Menu
@@ -75,10 +145,10 @@ root = Tk()
 root.title("Ruleta")
 
 opcion  = IntVar()
-numero  = StringVar()
-apuesta = StringVar()
-color   = StringVar()
-paridad = StringVar()
+num  = StringVar()
+apue = StringVar()
+col   = StringVar()
+par = StringVar()
 
 
 # Labels
