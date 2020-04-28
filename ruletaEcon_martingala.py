@@ -97,7 +97,7 @@ def apostar():
 
     altura = plata 
     cant_capital = []
-
+    c=0
     for i in range(1 , cantVeces + 1):
         nroaleatorio = random.randrange( 00, 37)
         
@@ -106,6 +106,7 @@ def apostar():
         if gano == 0 :
             if not infinito: 
                 plata -= apuesta
+                
                 if plata >= apuesta * 2:
                     apuesta *= 2
                 if plata < apuesta * 2:
@@ -113,8 +114,10 @@ def apostar():
                 if plata <= 0 :
                     print("Has perdido")
                     break
+                c+=1        
         if gano > 0:
             plata += gano
+            c+=1
             apuesta = apuesta_original
         cant_capital.append(plata)
         print(plata)
@@ -129,8 +132,19 @@ def apostar():
     plt.plot(cant_capital, "-r")
     plt.show()
 
-            
-         
+    #grafica barras
+    X=0
+    datos1=[]
+    datos1=[cant_capital, plata]
+    X=np.arange(c)
+    plt.bar(X+0.00, datos1[0], color="g", width=0.25)
+    plt.bar(X+0.25, datos1[1], color="b", width=0.25)
+    plt.ylabel("CC(Cantidad de Capital)")
+    plt.xlabel("Numero de tiradas")
+    plt.axis([ 0, c, 0, max(cant_capital)])
+    plt.show()    
+           
+    
 
 #region Menu
 #Menu
