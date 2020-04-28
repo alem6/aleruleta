@@ -77,7 +77,7 @@ def apostar():
     cantJugadas = 5
     modo = opcion.get()  # 1 2 3
     
-    infinito = False
+    infinito = True
     debug = False
  # Busca los parametros de la apuesta que puede   
 
@@ -107,9 +107,10 @@ def apostar():
     for i in range(1 , cantVeces + 1):
         nroaleatorio = random.randrange( 00, 37)
         apuesta = getNthFib(n)
-        if apuesta > plata: 
-            print("-------------- HAS PERDIDO ----------------------" )
-            break
+        if not infinito:
+            if apuesta > plata: 
+                print("-------------- HAS PERDIDO ----------------------" )
+                break
         gano = getGano(modo , nroaleatorio , apuesta , color , numero , paridad)
         dinero_ganado.append(gano)
         if gano == 0:
@@ -138,27 +139,30 @@ def apostar():
     plt.xlabel("Numero de tiradas")
     plt.axis([ 0 , len(cant_capital) - 1 , 0 , max(cant_capital) + 10])
     plt.plot(cant_capital, "-r")
-    plt.show()
-
+    #plt.show()
+    plt.savefig("cc.png")
+    plt.clf()
     #grafica barras
     X=0
     datos1=[]
     datos1=[cant_capital]
-    X=np.arange(c) 
+    X=np.arange(len(cant_capital)) 
     plt.bar(X+0.00,datos1[0],color='g',width=0.25)
     plt.axhline(plata , lw = 1.5)
     plt.ylabel("CC(Cantidad de Capital)")
     plt.xlabel("Numero de tiradas")
     plt.axis([ 0 , c - 1, 0 , max(cant_capital) + 10])
-    plt.show()
-
+    #plt.show()
+    plt.savefig("barrascc.png")
+    plt.clf()
     #Frec Relativa
     x_coords = np.arange(len(frec_relativas))
     plt.bar(x_coords , frec_relativas , width = 0.25 , color = "b")
     plt.ylabel("Frecuencias Relativas")
     plt.xlabel("Numero de tiradas")
-    plt.show()
-    
+    #plt.show()
+    plt.savefig("fr.png")
+    plt.clf()
     #Ganancia por tiro
     width = 0.25
     x_coords = np.arange(len(dinero_ganado))
@@ -166,7 +170,9 @@ def apostar():
     plt.ylabel("Frecuencias Relativas")
     plt.xlabel("Numero de tiradas")
     plt.legend()
-    plt.show()     
+    #plt.show()
+    plt.savefig("gpt.png")   
+    plt.clf()  
 
 #region Menu
 #Menu
