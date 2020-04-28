@@ -96,8 +96,10 @@ def apostar():
     
 
     altura = plata 
+    frec_relativas=[]
     cant_capital = []
-    c=0
+    dinero_ganado=[]
+    c , cant_ganadas= 0, 0
     for i in range(1 , cantVeces + 1):
         nroaleatorio = random.randrange( 00, 37)
         
@@ -118,7 +120,9 @@ def apostar():
         if gano > 0:
             plata += gano
             c+=1
+            cant_ganadas+=1
             apuesta = apuesta_original
+        frec_relativas.append(plata)    
         cant_capital.append(plata)
         print(plata)
 
@@ -131,18 +135,42 @@ def apostar():
     plt.axis([ 0 , cantVeces , 0 , 500])
     plt.plot(cant_capital, "-r")
     plt.show()
+    plt.savefig("cc.png")
 
     #grafica barras
     X=0
     datos1=[]
     datos1=[cant_capital, plata]
-    X=np.arange(c)
+    X=np.arange(len(cant_capital))
     plt.bar(X+0.00, datos1[0], color="g", width=0.25)
-    plt.bar(X+0.25, datos1[1], color="b", width=0.25)
+    plt.axhline(plata, lw=1.5)
     plt.ylabel("CC(Cantidad de Capital)")
     plt.xlabel("Numero de tiradas")
-    plt.axis([ 0, c, 0, max(cant_capital)])
-    plt.show()    
+    plt.axis([ 0, c -1, 0, max(cant_capital) + 10])
+    #plt.show()  
+    plt.savefig("barrascc.png")
+    plt.clf()
+
+    #frec relativa
+    x_coords= np.arange(len(frec_relativas))
+    plt.bar(x_coords, frec_relativas, width= 0.25, color= 'b')
+    plt.ylabel("frecuencia relativas")
+    plt.xlabel("numero de tiradas") 
+    #plt.show() 
+    plt.savefig("fr.png")
+    plt.clf()
+
+    #ganancia por tiro
+    width= 0.25
+    x_coords=np.arange(len(dinero_ganado))
+    plt.bar(x_coords + width / 2, dinero_ganado, width = width, color= 'g', label= "Dinero Ganado")
+    plt.ylabel("Frecuencias Relativas")
+    plt.xlabel("Numero de tiradas")
+    plt.legend()
+    #plt.show() 
+    plt.savefig("gpt.png")
+    plt.clf()
+    
            
     
 
