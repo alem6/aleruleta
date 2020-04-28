@@ -37,8 +37,6 @@ def opcionMenu():
         #Limpia        
         Label(opciones , text = "Ingrese el numero al que desea apostar").pack()
         Entry(opciones , textvariable = num ).pack()
-        Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apue ).pack()
 
         Button(opciones , command = apostar , text = "Apostar").pack()
 
@@ -46,8 +44,6 @@ def opcionMenu():
         #Limpia
         Label(opciones , text = "Ingrese el color al que desea apostar (R ,N)").pack()
         Entry(opciones , textvariable = col).pack()
-        Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apue).pack()
 
         Button(opciones , command = apostar , text = "Apostar").pack()
 
@@ -56,8 +52,7 @@ def opcionMenu():
         #Limpia
         Label(opciones , text = "Ingrese si desea apostar a par o impar (I , P)").pack()
         Entry(opciones , textvariable = par).pack()
-        Label(opciones , text = "Ingrese cuanto desea apostar").pack()
-        Entry(opciones , textvariable = apue).pack()
+
 
         Button(opciones , command = apostar, text = "Apostar").pack()
         
@@ -78,7 +73,7 @@ def getGano(modo, numero_random , apuesta , color_apostado , numero_apostado , p
     return gano
 
 def apostar(): 
-    cantVeces = 10
+    cantVeces = 100
     cantJugadas = 5
     modo = opcion.get()  # 1 2 3
     
@@ -141,7 +136,7 @@ def apostar():
     plt.axhline(altura)
     plt.ylabel("CC(Cantidad de Capital)")
     plt.xlabel("Numero de tiradas")
-    plt.axis([ 0 , len(cant_capital) , 0 , max(cant_capital) + 10])
+    plt.axis([ 0 , len(cant_capital) - 1 , 0 , max(cant_capital) + 10])
     plt.plot(cant_capital, "-r")
     plt.show()
 
@@ -154,23 +149,20 @@ def apostar():
     plt.axhline(plata , lw = 1.5)
     plt.ylabel("CC(Cantidad de Capital)")
     plt.xlabel("Numero de tiradas")
-    plt.axis([ 0 , c, 0 , max(cant_capital) + 10])
+    plt.axis([ 0 , c - 1, 0 , max(cant_capital) + 10])
     plt.show()
 
     #Frec Relativa
-    x_coords = np.arange(cantVeces)
+    x_coords = np.arange(len(frec_relativas))
     plt.bar(x_coords , frec_relativas , width = 0.25 , color = "b")
     plt.ylabel("Frecuencias Relativas")
     plt.xlabel("Numero de tiradas")
     plt.show()
     
-    #Frec Relativa y ganancia
+    #Ganancia por tiro
     width = 0.25
-    dinero_ganado_norm = []
-    for dg in dinero_ganado: dinero_ganado_norm.append(dg / max(dinero_ganado)) 
-    x_coords = np.arange(cantVeces)
-    plt.bar(x_coords - width / 2 , frec_relativas , width = width , color = "b", label = "Frec. Relativa")
-    plt.bar(x_coords + width / 2, dinero_ganado_norm, width = width , color = "g", label = "Dinero Ganado")
+    x_coords = np.arange(len(dinero_ganado))
+    plt.bar(x_coords + width / 2, dinero_ganado, width = width , color = "g", label = "Dinero Ganado")
     plt.ylabel("Frecuencias Relativas")
     plt.xlabel("Numero de tiradas")
     plt.legend()
