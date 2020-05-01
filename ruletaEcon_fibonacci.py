@@ -73,11 +73,11 @@ def getGano(modo, numero_random , apuesta , color_apostado , numero_apostado , p
     return gano
 
 def apostar(): 
-    cantVeces = 100
+    cantVeces = 1000
     cantJugadas = 5
     modo = opcion.get()  # 1 2 3
     
-    infinito = True
+    infinito = False
     debug = False
  # Busca los parametros de la apuesta que puede   
 
@@ -143,16 +143,16 @@ def apostar():
     plt.savefig("cc.png")
     plt.clf()
     #grafica barras
-    X=0
-    datos1=[]
+    
     datos1=[cant_capital]
     X=np.arange(len(cant_capital)) 
-    plt.bar(X+0.00,datos1[0],color='g',width=0.25)
-    plt.axhline(plata , lw = 1.5)
+    plt.bar(X,datos1[0],color='g',width=0.25)
+    plt.axhline(plata , lw = 8)
     plt.ylabel("CC(Cantidad de Capital)")
     plt.xlabel("Numero de tiradas")
-    plt.axis([ 0 , c - 1, 0 , max(cant_capital) + 10])
+    plt.axis([ 0 , len(cant_capital), 0 , max(cant_capital) + 10])
     #plt.show()
+    plt.tight_layout()
     plt.savefig("barrascc.png")
     plt.clf()
     #Frec Relativa
@@ -164,11 +164,12 @@ def apostar():
     plt.savefig("fr.png")
     plt.clf()
     #Ganancia por tiro
-    width = 0.25
+    width = 0.3
     x_coords = np.arange(len(dinero_ganado))
     plt.bar(x_coords + width / 2, dinero_ganado, width = width , color = "g", label = "Dinero Ganado")
     plt.ylabel("Frecuencias Relativas")
     plt.xlabel("Numero de tiradas")
+    plt.axis([ 0 ,len(dinero_ganado) - 1, 0 , max(dinero_ganado) + 10])
     plt.legend()
     #plt.show()
     plt.savefig("gpt.png")   
