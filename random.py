@@ -16,8 +16,24 @@ def glc(a, m , seed, n):
     print(random_numbers)
     return(random_numbers[-1])
 
-ret = glc(7 , 11 , 12 , 5) # a , m , seed
-print(ret)
+def sng(number):#Square Number Generator
+    """
+        number debe ser un numero 2n
+    """
 
-    
+    number_4n = str(number ** 2)
+
+    while True:
+        if len(number_4n) % 2 != 0:
+            number_4n += "0"
+        else:
+            break
+    half = int(len(number_4n) / 2)
+    random_number = number_4n[half-2:half+2]
+    return float("0." + random_number)
+
+
+#ret = glc(7 , 11 , 12 , 5) # a , m , seed
+
+print(sng(2222))    
     
