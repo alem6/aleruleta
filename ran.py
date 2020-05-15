@@ -1,12 +1,14 @@
 ## Random number generator
 
-from math import sqrt,fsum
+from math import sqrt, fsum, erfc
 from decimal import Decimal
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import chisquare
 from scipy import stats
+from scipy import special
 from PIL import Image
+import random
 
 def glc(a, m, c, seed, n):
     """
@@ -45,6 +47,7 @@ def sng(seed , iteraciones):#Square Number Generator
         x_i = int(number_4n[half - 2 : half + 2]) 
         random_numbers.append(float("0." + str(x_i)))
     return random_numbers
+
 def histogram(n, number_array):
     """
     Genera el histograma de frecuencia
@@ -80,6 +83,9 @@ def histogram(n, number_array):
     return contadores
 
 def chi(n , contadores):
+    """
+        Test de chi cuadrado
+    """
     ei = n / len(contadores)
     
     chi_cuadr = 0
@@ -96,6 +102,10 @@ def chi(n , contadores):
         print("Paso la prueba de Chi-Cuadrado")
 
 def bitmap(numeros):
+
+    """
+    Genera el bitmap
+    """
     m = int(sqrt(len(numeros)))
     img = Image.new(  size = (m, m), color =(0, 0, 0), mode = "RGB") # Create a new black image
     pixels = img.load() # Create the pixel map
@@ -105,8 +115,19 @@ def bitmap(numeros):
                 pixels[i, j] = (i, j, 1000)
     img.show()
 
-def monobit():
-    pass
+def monobit(number_array):
+    """
+        Test de monobit
+    """
+    
+    bitstring = [1 if n > 0.5 else -1  for n in number_array ]
+    total = abs(sum(bitstring))
+    statistic = total / sqrt(len(number_array))
+    result = erfc(statistic/sqrt(2))
+    if result < 0.01:
+        print("La secuencia no es aleatoria")
+    else:
+        print("Paso el test de monobit")
 
 """
     Comienzo del programa principal
@@ -115,12 +136,12 @@ def monobit():
 cant_numeros = 1000000
 
 # Genero numeros
-numeros_glc = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
-#numeros_sng = sng(2222, cant_numeros)
-
+#numeros_glc = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
+#numeros_sng = sng(1504, cant_numeros)
+numeros_pyrando = [random.random() for x in range(cant_numeros)]
 
 # Variable a Cambiar depende de que generador queremos testear
-numeros = numeros_glc
+numeros = numeros_pyrando
 
 # Comienzo tests
 contadores = histogram(n = cant_numeros , number_array = numeros )
@@ -128,4 +149,6 @@ contadores = histogram(n = cant_numeros , number_array = numeros )
 chi(n = cant_numeros , contadores = contadores)
 
 bitmap(numeros = numeros)
+
+monobit(number_array = numeros)
 
