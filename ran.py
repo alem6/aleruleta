@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import chisquare
 from scipy import stats
+from PIL import Image
 
 def glc(a, m, c, seed, n):
     """
@@ -45,13 +46,13 @@ def sng(seed , iteraciones):#Square Number Generator
         random_numbers.append(float("0." + str(x_i)))
     return random_numbers
 
-cant_numeros = 2500
+cant_numeros = 1000000
 numeros_glc = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
 numeros_sng = sng(2222, cant_numeros)
 # print(numero1)
 # print(numero2)
 
-m = sqrt(cant_numeros)
+m = int(sqrt(cant_numeros))
 
 longitud_intervalo = 1 / m
 
@@ -75,14 +76,14 @@ contadores = []
 for i in intervalos:
     contadores.append(i[2])
 #x_coords = np.arange(len(intervalos)) 
-#plt.bar(x_coords, contadores , color = 'r'  , label = f"FR intervalo")
-#plt.xlabel("Intervalos")
-#plt.ylabel("Cantidad")
-#plt.legend()
-#plt.show()
-    
-# Oi, contadores
-# Ei, n / m
+plt.bar(x_coords, contadores , color = 'r'  , label = f"FR intervalo")
+plt.xlabel("Intervalos")
+plt.ylabel("Cantidad")
+plt.legend()
+plt.show()
+   
+ Oi, contadores
+ Ei, n / m
 ei = cant_numeros / m
 chi_cuadr = 0
 
@@ -96,3 +97,16 @@ chi_table = stats.chi2.ppf(q = 0.95, df = len(intervalos) - 1)
 # Evalua
 if chi_cuadr < chi_table:
     print("Paso la prueba de Chi-Cuadrado")
+
+
+
+
+img = Image.new(  size = (m, m), color =(0, 0, 0), mode = "RGB") # Create a new black image
+pixels = img.load() # Create the pixel map
+for i in range(img.size[0]):    # For every pixel:
+    for j in range(img.size[1]):
+        if(numeros_glc[i * j] > 0.5):
+            pixels[i, j] = (i, j, 1000)
+        
+
+img.show()
