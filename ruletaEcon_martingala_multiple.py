@@ -106,15 +106,15 @@ def apostar():
         print("Tiene que ingresar una apuesta")
     
     n = 1
-    plata = 100
+    caja = 10000
 
-    altura = plata
+    altura = caja
     cant_capital = [[],[],[],[],[]]
     frec_relativas = [[],[],[],[],[]]
     dinero_ganado = [[],[],[],[],[]] 
     c  = 0   
     for x in range(0, cantJugadas):
-        plata = 100
+        caja = 10000
         cant_ganadas = 0
         apuesta = apuesta_original
         for i in range(1 , cantVeces + 1):
@@ -123,33 +123,29 @@ def apostar():
             gano = getGano(modo , nroaleatorio , apuesta , color , numero , paridad)
             
             if gano == 0 :  
-                if not infinito: 
-                    plata -= apuesta
-                    dinero_ganado[x].append(-apuesta)
-                    if plata >= apuesta * factor:
-                        apuesta *= factor
-                    if plata < apuesta * factor:
-                        apuesta = plata
-                    if plata <= 0 :
-                        print("Has perdido")
-                        break
-                    c+=1
-                else:
+                caja -= apuesta
+                dinero_ganado[x].append(-apuesta)
+                if infinito:
                     apuesta *= factor
-                    dinero_ganado[x].append(0)
+                elif caja >= apuesta * factor:
+                    apuesta *= factor
+                elif caja < apuesta * factor :
+                    print("Has perdido")
+                    break
+                c+=1
 
             if gano > 0:
                 dinero_ganado[x].append(gano)
-                plata -= apuesta
-                plata += gano
-                c+=1
-                cant_ganadas+=1
+                caja -= apuesta
+                caja += gano
+                c += 1
+                cant_ganadas += 1
                 apuesta = apuesta_original
             frec_relativas[x].append(cant_ganadas / i)
-            cant_capital[x].append(plata)
-            if debug : print(f"Aposto {apuesta} y tiene {plata}")
+            cant_capital[x].append(caja)
+            if debug : print(f"Aposto {apuesta} y tiene {caja}")
 
-    print(cant_capital)
+    #print(cant_capital)
     colores = ["r", "b", "g" , "c" , "m"]
     for index , arrayFrecuencia in enumerate(frec_relativas):
         x_coords = np.arange(len(arrayFrecuencia)) 
@@ -157,51 +153,52 @@ def apostar():
     plt.xlabel("N")
     plt.ylabel("FR")
     plt.legend()
-    if infinito:
-        plt.savefig("mg_fr_ili.png")
-    else:
-        plt.savefig("mg_fr_li.png")
-    plt.clf()
-    
+    #if infinito:
+    #    plt.savefig("mg_fr_ili.png")
+    #else:
+    #    plt.savefig("mg_fr_li.png")
+    #plt.clf()
+    plt.show()
     
     for index , cant_c in enumerate(cant_capital):
-        plt.plot(cant_c , color = colores[index] , label = f"Dinero corrida {index + 1}" )
-    plt.axhline(y = 100, color = "y", label = "Dinero inicial")
+        plt.plot(cant_c , color = colores[index] , label = f"Flujo de caja corrida {index + 1}" )
+    plt.axhline(y = altura, color = "y", label = "Caja inicial")
     plt.xlabel("N")
     plt.ylabel("Cant Capital")
     plt.legend()
-    if infinito:
-        plt.savefig("mg_cc_ili.png")
-    else:
-        plt.savefig("mg_cc_li.png")
-    plt.clf()
+    #if infinito:
+    #    plt.savefig("mg_cc_ili.png")
+    #else:
+    #    plt.savefig("mg_cc_li.png")
+    #plt.clf()
+    plt.show()
     
     max_dinero = getMax(cant_capital)
     
     for index, cant_c in enumerate(cant_capital) :
         x_coords = np.arange(len(cant_c)) 
-        plt.bar(x_coords + index / 10, cant_c , width = 0.1 , color = colores[index]  , label = f"CC corrida {index + 1}")
+        plt.bar(x_coords + index / 10, cant_c , width = 0.1 , color = colores[index]  , label = f"Flujo de caja corrida {index + 1}")
     plt.axhline(y = max_dinero, color = "y", label = "Dinero maximo")
     plt.xlabel("N")
     plt.ylabel("Cant Capital")
     plt.legend()
-    if infinito:
-        plt.savefig("mg_ccb_ili.png")
-    else:
-        plt.savefig("mg_ccb_li.png")
-    plt.clf()
-
+    #if infinito:
+    #    plt.savefig("mg_ccb_ili.png")
+    #else:
+    #    plt.savefig("mg_ccb_li.png")
+    #plt.clf()
+    plt.show()
     for index, gain in enumerate(dinero_ganado):
         plt.plot(gain , color = colores[index] , label = f"Ganancia-Perdida/Tiro {index + 1}" )
     plt.xlabel("N")
     plt.ylabel("Ganancia")
     plt.legend()
-    if infinito:
-        plt.savefig("mg_gpt_ili.png")
-    else:
-        plt.savefig("mg_gpt_li.png")
-    plt.clf()
-    
+    #if infinito:
+    #    plt.savefig("mg_gpt_ili.png")
+    #else:
+    #    plt.savefig("mg_gpt_li.png")
+    #plt.clf()
+    plt.show()
            
     
 

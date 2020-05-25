@@ -103,7 +103,8 @@ def apostar():
         paridad = ""
     
     n = 1
-    plata = 1000
+    plata = 10000
+    plata_inicial = plata
     apuesta = getNthFib(n)
     altura = plata
     cant_capital = [[],[],[],[],[]]
@@ -111,7 +112,7 @@ def apostar():
     dinero_ganado = [[],[],[],[],[]] 
     c  = 0   
     for x in range(0, cantJugadas):
-        plata = 1000
+        plata = 10000
         cant_ganadas = 0
         n = 1
         for i in range(1 , cantVeces + 1):
@@ -128,9 +129,8 @@ def apostar():
                 dinero_ganado[x].append(-apuesta)
             if gano == 0:
                 n += 1
-                if not infinito:
-                    plata -= apuesta
-                    c+=1
+                plata -= apuesta
+                c += 1
             if gano > 0:
                 plata -= apuesta
                 plata += gano
@@ -154,39 +154,42 @@ def apostar():
     plt.xlabel("N")
     plt.ylabel("FR")
     plt.legend()
-    plt.savefig("fib_fr_li.png")
-    plt.clf()
+    plt.show()
+    #plt.savefig("fib_fr_li.png")
+    #plt.clf()
     
     
     for index , cant_c in enumerate(cant_capital):
-        plt.plot(cant_c , color = colores[index] , label = f"Dinero corrida {index + 1}" )
-    plt.axhline(y = 100, color = "y", label = "Dinero inicial")
+        plt.plot(cant_c , color = colores[index] , label = f"Flujo de caja corrida {index + 1}" )
+    plt.axhline(y = plata_inicial, color = "y", label = "Dinero inicial")
     plt.xlabel("N")
     plt.ylabel("Cant Capital")
     plt.legend()
-    plt.savefig("fib_cc_li.png")
-    plt.clf()
-    
+    #plt.savefig("fib_cc_li.png")
+    #plt.clf()
+    plt.show()
+
     max_dinero = getMax(cant_capital)
     
     for index, cant_c in enumerate(cant_capital) :
         x_coords = np.arange(len(cant_c)) 
-        plt.bar(x_coords + index / 10, cant_c , width = 0.1 , color = colores[index]  , label = f"CC corrida {index + 1}")
+        plt.bar(x_coords + index / 10, cant_c , width = 0.1 , color = colores[index]  , label = f"Flujo de caja corrida {index + 1}")
     plt.axhline(y = max_dinero, color = "y", label = "Dinero maximo")
     plt.xlabel("N")
     plt.ylabel("Cant Capital")
     plt.legend()
-    plt.savefig("fib_ccb_li.png")
-    plt.clf()
-
+    #plt.savefig("fib_ccb_li.png")
+    #plt.clf()
+    
+    plt.show()
     for index, gain in enumerate(dinero_ganado):
         plt.plot(gain , color = colores[index] , label = f"Ganancia-Perdida/Tiro {index + 1}" )
     plt.xlabel("N")
     plt.ylabel("Ganancia")
     plt.legend()
-    plt.savefig("fib_gpt_li.png")
-    plt.clf()
-
+    #plt.savefig("fib_gpt_li.png")
+    #plt.clf()
+    plt.show()
     #region Graphs
     #    
     #  
