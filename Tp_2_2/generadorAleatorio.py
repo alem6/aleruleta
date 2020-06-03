@@ -1,17 +1,22 @@
-def glc(a, m, c, seed, n):
-    """
-        a,m son los factores del generador,
-        seed es la semilla,
-        n es el numero aleatorio en la posicion n 
-    """
-    random_numbers = []
-    n_i = seed
-    if n == 1:
-        return n_i
+#imports
+import random
+import math
+
+#Generadores
+def uniform(a, b):
+    r = random.random()
+    x = a + (b - a) * r 
+    return x
+
+def exp(ex):
+    r = random.random()
+    x = -ex * math.log(r , 10)
+    return x
+
+def gamma(k, a):
+    tr = 1.0
+    for i in range(5):
+        r = random.random()
+        tr *= r
+    x = -math.log(tr)
     
-    for i in range(n):
-        n_i = (a * n_i + c)  % m 
-        random_numbers.append(n_i / m)
-    return random_numbers
-
-
