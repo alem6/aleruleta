@@ -2,6 +2,7 @@
 import random
 import math
 import matplotlib.pyplot as plt
+from scipy.stats import *
 from scipy.stats import kstest, ks_2samp, chisquare
 from scipy.stats import uniform
 from scipy.stats import norm, gamma, binom, hypergeom
@@ -163,7 +164,7 @@ def graph(data1, data2, linea):
     plt.legend()
     plt.show()
 def testUniform(a, b):
-    n = 100000
+    n = 1000000
     data_uni        = np.array([uni(a, b) for u in range(n)])
     m = 10
     intervalos = []
@@ -182,7 +183,7 @@ def testUniform(a, b):
                 intervalo[2] += 1
                 break
     contadores = [q[2] for q in intervalos]
-    print(contadores)
+    print("-------------TEST UNIFORME-------------")
     print(chisquare(contadores))
     #print(kstest(data_uni, 'uniform', args=(0, 10)))    
     #graph(None, data_uni, False)
@@ -195,8 +196,11 @@ def testUniform(a, b):
 def testNormal(mu, sigma, n):
     data_norm = norm.rvs(size= n, loc= mu, scale= sigma )
     data_normal = np.array([normal(mu, sigma) for u in range(n)])
-    print("Ks2amp ",ks_2samp(data_norm, data_normal))
-    print("Ks ",kstest(data_normal, 'norm'))
+    graph(data_norm, data_normal, False)
+    print("-------------TEST normal-------------")
+    print("Ks ",kstest(data_normal, 'norm', args=(mu, sigma)))
+    print("Ks ",kstest(data_norm, 'norm'))
+    print(normaltest(data_normal))
 
 if __name__ == "__main__":
     #generateUniform(1000000, 0, 10, False)
@@ -209,4 +213,5 @@ if __name__ == "__main__":
     #generatePascal(1000, 2 , 3, False)
     #generateEmpirica(1000, False)
     for x in range(10):
-        testUniform(0, 10)
+        #testUniform(0, 1)
+        testNormal(0, 1, 1000000)
