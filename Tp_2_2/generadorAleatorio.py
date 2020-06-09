@@ -4,7 +4,7 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import uniform
-from scipy.stats import norm, gamma
+from scipy.stats import norm, gamma, binom, hypergeom
 import numpy as np
 import seaborn as sns
 
@@ -76,7 +76,20 @@ def poisson(p):
             break
         else:
             x += 1
-    return x 
+    return x
+
+def empirica():
+    tabla = [0.273, 0.037, 0.195, 0.009, 0.124, 0.058, 0.062, 0.151, 0.047, 0.044]
+    tabla_acumulada = [0.273, 0.31, 0.505, 0.514, 0.638, 0.696, 0.758, 0.909, 0.956, 1]
+    x = 0
+    b = list(range(10))
+    r = random.random()
+    for index, t in enumerate(tabla_acumulada):
+        if tabla_acumulada[index] <= r < tabla_acumulada[index + 1 ]:
+            x = b[index]
+            break
+    return x
+
 def generateUniform(n, a, b, linea):
     #Generamos uniforme
     data_uniform = uniform.rvs(size=n, loc= a, scale=b)
@@ -92,7 +105,7 @@ def generateExp(n, ex, linea):
 
 def generateGamma(n, k, a, linea):
     #generamos gamma
-    data_statsgamma = stats.gamma.rvs(size= n, a= a, loc= 0, scale= 1)
+    data_statsgamma = stats.gamma.rvs(size= n, a= k, loc= 0, scale= 1/a)
     data_gamma     = np.array([gamma(k, a) for u in range(n)])
     graph(data_statsgamma, data_gamma, linea)
 def generateNormal(n, mu, sigma, linea):
@@ -100,19 +113,25 @@ def generateNormal(n, mu, sigma, linea):
     data_norm = norm.rvs(size= n, loc= mu, scale= sigma )
     data_normal = np.array([normal(mu, sigma) for u in range(n)])
     graph(data_norm, data_normal, linea)
-def generatePascal(n):
-    pass
-def generateBinomial(n):
-    pass
-def generateHypgeo(n):
-    pass
+def generatePascal(n,k, q, linea):
+    data_pascal = np.array([pascal(k ,q) for u in range(n)])
+    graph(None, data_pascal, linea)
+def generateBinomial(n, k, p, linea):
+    data_binom = binom.rvs(k, p , size= n)
+    data_binomial = np.array([binomial(k, p) for u in range(n)])
+    graph(data_binom, data_binomial, linea)
+def generateHypgeo(k, m, n, size, linea):
+    data_hypergeom = hypergeom.rvs(M= m, n= n, N= k, size= size)
+    data_hypgeo = np.array([hypgeo(k, m, n) for u in range(size)])
+    graph(data_hypergeom, data_hypgeo, linea)
 def generatePoisson(n, mu,linea):
     # generamos poisson
     data_poisson = stats.poisson.rvs(mu = mu, size=n)
     data_poiss   = np.array([poisson(mu) for u in range(n)])
     graph(data_poisson, data_poiss, linea)
-def generateEmpirica(n):
-    pass
+def generateEmpirica(n, linea):
+    data_empirica = np.array([empirica() for u in range(n)])
+    graph(None, data_empirica, linea)
     
 
 
@@ -122,13 +141,14 @@ def graph(data1, data2, linea):
         Y segundo argumento otro array de np con el generador que creamos nosotros
     """
     #Generador de Scipy
-    data1graph = sns.distplot(data1,
-                            bins=100,
-                            kde=linea,
-                            color='green',
-                            hist_kws={"linewidth": 15,'alpha':0.5},
-                            label = "Generador Python",)
-    data1graph.set(xlabel='Distr', ylabel='Frecuencia')
+    if data1 is not None:
+        data1graph = sns.distplot(data1,
+                                bins=100,
+                                kde=linea,
+                                color='green',
+                                hist_kws={"linewidth": 15,'alpha':0.5},
+                                label = "Generador Python",)
+        data1graph.set(xlabel='Distr', ylabel='Frecuencia')
     
     
     #Nuestro generador
@@ -144,8 +164,12 @@ def graph(data1, data2, linea):
 
     
 if __name__ == "__main__":
-    generateUniform(1000000, 0, 10, False)
-    generateExp(5000, 1, True)
-    generateNormal(1000000, 10, 2, True)
-    generateGamma(10000, 1, 2, True)
-    generatePoisson(1000, 5, False)
+    #generateUniform(1000000, 0, 10, False)
+    #generateExp(5000, 1, True)
+    #generateNormal(1000000, 10, 2, True)
+    #generateGamma(10000, 1, 2, True)
+    #generatePoisson(1000, 5, False)
+    #generateBinomial(1000, 10, 0.2, False)
+    #generateHypgeo(10, 3, 3, 1000, True)
+    #generatePascal(1000, 2 , 3, False)
+    generateEmpirica(1000, False)
