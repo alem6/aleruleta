@@ -2,11 +2,12 @@
 import random
 import math
 import matplotlib.pyplot as plt
-from scipy import stats
-from scipy.stats import uniform, tests
+from scipy.stats import kstest, ks_2samp, chisquare
+from scipy.stats import uniform
 from scipy.stats import norm, gamma, binom, hypergeom
 import numpy as np
 import seaborn as sns
+from decimal import Decimal
 
 #Generadores
 def uni(a, b):
@@ -161,8 +162,42 @@ def graph(data1, data2, linea):
     data2graph.set(xlabel='Distr', ylabel='Frecuencia')
     plt.legend()
     plt.show()
-
+def testUniform(a, b):
+    n = 100000
+    data_uni        = np.array([uni(a, b) for u in range(n)])
+    m = 10
+    intervalos = []
+    longitud_intervalo = (b - a) / m
+    for x in range(int(m)):
+        intervalo = [] 
+        intervalo.append(float(x * Decimal(str(longitud_intervalo))))
+        intervalo.append(float(int(x + 1) * Decimal(str(longitud_intervalo))))
+        intervalo.append(0)
+        intervalos.append(intervalo)
     
+    for n in data_uni:
+        for intervalo in intervalos:
+            if  intervalo[0] < n < intervalo[1]:
+                #Numero adentro del intervalo
+                intervalo[2] += 1
+                break
+    contadores = [q[2] for q in intervalos]
+    print(contadores)
+    print(chisquare(contadores))
+    #print(kstest(data_uni, 'uniform', args=(0, 10)))    
+    #graph(None, data_uni, False)
+
+    #data_uniform = uniform.rvs(size=n, loc= a, scale=b)
+    #print(kstest(data_uniform, 'uniform', args=(0, 10)))
+    #print(ks_2samp(data_uni, data_uniform))
+
+
+def testNormal(mu, sigma, n):
+    data_norm = norm.rvs(size= n, loc= mu, scale= sigma )
+    data_normal = np.array([normal(mu, sigma) for u in range(n)])
+    print("Ks2amp ",ks_2samp(data_norm, data_normal))
+    print("Ks ",kstest(data_normal, 'norm'))
+
 if __name__ == "__main__":
     #generateUniform(1000000, 0, 10, False)
     #generateExp(5000, 1, True)
@@ -170,6 +205,8 @@ if __name__ == "__main__":
     #generateGamma(10000, 1, 2, True)
     #generatePoisson(1000, 5, False)
     #generateBinomial(1000, 10, 0.2, False)
-    generateHypgeo(40, 20, 0.1, 1000000, False)
+    #generateHypgeo(40, 20, 0.1, 1000000, False)
     #generatePascal(1000, 2 , 3, False)
     #generateEmpirica(1000, False)
+    for x in range(10):
+        testUniform(0, 10)
