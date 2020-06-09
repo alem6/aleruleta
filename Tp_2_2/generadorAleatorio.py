@@ -39,11 +39,11 @@ def normal(ex ,stdx):
 
 def pascal(k,q):
     tr = 1.0
-    qr = math.log10(q)
+    qr = math.log(q)
     for i in range(k):
         r = random.random()
         tr *= r
-    nx = math.log10(tr) / qr
+    nx = math.log(tr) / qr
     return nx
 
 def binomial(n, p):
@@ -166,7 +166,7 @@ def graph(data1, data2, linea):
 def testUniform(a, b):
     n = 1000000
     data_uni        = np.array([uni(a, b) for u in range(n)])
-    m = 10
+    m = 1000
     intervalos = []
     longitud_intervalo = (b - a) / m
     for x in range(int(m)):
@@ -175,10 +175,10 @@ def testUniform(a, b):
         intervalo.append(float(int(x + 1) * Decimal(str(longitud_intervalo))))
         intervalo.append(0)
         intervalos.append(intervalo)
-    
+    data_uni = sorted(data_uni)
     for n in data_uni:
         for intervalo in intervalos:
-            if  intervalo[0] < n < intervalo[1]:
+            if  intervalo[0] < n <= intervalo[1]:
                 #Numero adentro del intervalo
                 intervalo[2] += 1
                 break
@@ -195,12 +195,12 @@ def testUniform(a, b):
 
 def testNormal(mu, sigma, n):
     data_norm = norm.rvs(size= n, loc= mu, scale= sigma )
-    data_normal = np.array([normal(mu, sigma) for u in range(n)])
-    graph(data_norm, data_normal, False)
+    #data_normal = np.array([normal(mu, sigma) for u in range(n)])
+    #graph(data_norm, data_normal, False)
     print("-------------TEST normal-------------")
-    print("Ks ",kstest(data_normal, 'norm', args=(mu, sigma)))
-    print("Ks ",kstest(data_norm, 'norm'))
-    print(normaltest(data_normal))
+    #print("Ks ",kstest(data_normal, 'norm', args=(mu, sigma)))
+    print("Ks ",kstest(data_norm, 'norm', args=(mu, sigma)))
+    #print(normaltest(data_norm))
 
 if __name__ == "__main__":
     #generateUniform(1000000, 0, 10, False)
@@ -213,5 +213,5 @@ if __name__ == "__main__":
     #generatePascal(1000, 2 , 3, False)
     #generateEmpirica(1000, False)
     for x in range(10):
-        #testUniform(0, 1)
-        testNormal(0, 1, 1000000)
+        testUniform(0, 1)
+        #testNormal(0, 1, 1000000)
