@@ -3,7 +3,7 @@ import random
 import math
 import matplotlib.pyplot as plt
 from scipy import stats
-from scipy.stats import uniform
+from scipy.stats import uniform, tests
 from scipy.stats import norm, gamma, binom, hypergeom
 import numpy as np
 import seaborn as sns
@@ -121,9 +121,9 @@ def generateBinomial(n, k, p, linea):
     data_binomial = np.array([binomial(k, p) for u in range(n)])
     graph(data_binom, data_binomial, linea)
 def generateHypgeo(k, m, n, size, linea):
-    data_hypergeom = hypergeom.rvs(M= m, n= n, N= k, size= size)
+    
     data_hypgeo = np.array([hypgeo(k, m, n) for u in range(size)])
-    graph(data_hypergeom, data_hypgeo, linea)
+    graph(None, data_hypgeo, linea)
 def generatePoisson(n, mu,linea):
     # generamos poisson
     data_poisson = stats.poisson.rvs(mu = mu, size=n)
@@ -170,6 +170,6 @@ if __name__ == "__main__":
     #generateGamma(10000, 1, 2, True)
     #generatePoisson(1000, 5, False)
     #generateBinomial(1000, 10, 0.2, False)
-    #generateHypgeo(10, 3, 3, 1000, True)
+    generateHypgeo(40, 20, 0.1, 1000000, False)
     #generatePascal(1000, 2 , 3, False)
-    generateEmpirica(1000, False)
+    #generateEmpirica(1000, False)
