@@ -6,9 +6,28 @@ from scipy.stats import *
 from scipy.stats import kstest, ks_2samp, chisquare
 from scipy.stats import uniform
 from scipy.stats import norm, gamma, binom, hypergeom
+from scipy.stats import chi
+from scipy import stats
 import numpy as np
 import seaborn as sns
 from decimal import Decimal
+from collections import Counter
+
+def glc(a, m, c, seed, n):
+    """
+        a,m son los factores del generador,
+        seed es la semilla,
+        n es el numero aleatorio en la posicion n 
+    """
+    random_numbers = []
+    n_i = seed
+    if n == 1:
+        return n_i
+    
+    for i in range(n):
+        n_i = (a * n_i + c)  % m 
+        random_numbers.append(n_i / m)
+    return random_numbers 
 
 #Generadores
 def uni(a, b):
@@ -21,7 +40,7 @@ def exp(ex):
     x = -ex * math.log(r)
     return x
 
-def gamma(k, a):
+def gamm(k, a):
     tr = 1
     for i in range(k):
         r = random.random()
@@ -30,6 +49,7 @@ def gamma(k, a):
     return x
 
 def normal(ex ,stdx):
+    
     sum = 0
     for i in range(12):
         r = random.random()
@@ -67,7 +87,7 @@ def hypgeo(tn, ns, p):
         tn = tn - 1
     return x # algo
 
-def poisson(p):
+def poiss(p):
     x = 0
     b = math.exp(-p)
     tr = 1
@@ -82,11 +102,12 @@ def poisson(p):
 
 def empirica():
     tabla = [0.273, 0.037, 0.195, 0.009, 0.124, 0.058, 0.062, 0.151, 0.047, 0.044]
-    tabla_acumulada = [0.273, 0.31, 0.505, 0.514, 0.638, 0.696, 0.758, 0.909, 0.956, 1]
+    tabla_acumulada = [0, 0.273, 0.31, 0.505, 0.514, 0.638, 0.696, 0.758, 0.909, 0.956, 1]
     x = 0
     b = list(range(10))
     r = random.random()
     for index, t in enumerate(tabla_acumulada):
+
         if tabla_acumulada[index] <= r < tabla_acumulada[index + 1 ]:
             x = b[index]
             break
@@ -107,8 +128,8 @@ def generateExp(n, ex, linea):
 
 def generateGamma(n, k, a, linea):
     #generamos gamma
-    data_statsgamma = stats.gamma.rvs(size= n, a= k, loc= 0, scale= 1/a)
-    data_gamma     = np.array([gamma(k, a) for u in range(n)])
+    data_statsgamma = gamma.rvs(size= n, a= k, loc= 0, scale= 1/a)
+    data_gamma     = np.array([gamm(k, a) for u in range(n)])
     graph(data_statsgamma, data_gamma, linea)
 def generateNormal(n, mu, sigma, linea):
     #Generamos Normal
@@ -128,8 +149,8 @@ def generateHypgeo(k, m, n, size, linea):
     graph(None, data_hypgeo, linea)
 def generatePoisson(n, mu,linea):
     # generamos poisson
-    data_poisson = stats.poisson.rvs(mu = mu, size=n)
-    data_poiss   = np.array([poisson(mu) for u in range(n)])
+    data_poisson = np.random.poisson(lam= mu, size=n)
+    data_poiss   = np.array([poiss(mu) for u in range(n)])
     graph(data_poisson, data_poiss, linea)
 def generateEmpirica(n, linea):
     data_empirica = np.array([empirica() for u in range(n)])
@@ -164,54 +185,92 @@ def graph(data1, data2, linea):
     plt.legend()
     plt.show()
 def testUniform(a, b):
-    n = 1000000
+    n = 200 * 200
     data_uni        = np.array([uni(a, b) for u in range(n)])
-    m = 1000
-    intervalos = []
-    longitud_intervalo = (b - a) / m
-    for x in range(int(m)):
-        intervalo = [] 
-        intervalo.append(float(x * Decimal(str(longitud_intervalo))))
-        intervalo.append(float(int(x + 1) * Decimal(str(longitud_intervalo))))
-        intervalo.append(0)
-        intervalos.append(intervalo)
-    data_uni = sorted(data_uni)
-    for n in data_uni:
-        for intervalo in intervalos:
-            if  intervalo[0] < n <= intervalo[1]:
-                #Numero adentro del intervalo
-                intervalo[2] += 1
-                break
-    contadores = [q[2] for q in intervalos]
-    print("-------------TEST UNIFORME-------------")
-    print(chisquare(contadores))
-    #print(kstest(data_uni, 'uniform', args=(0, 10)))    
-    #graph(None, data_uni, False)
+    data_uniform    = uniform.rvs(loc= a, scale= b, size= n)
 
-    #data_uniform = uniform.rvs(size=n, loc= a, scale=b)
-    #print(kstest(data_uniform, 'uniform', args=(0, 10)))
-    #print(ks_2samp(data_uni, data_uniform))
+    print("-------------TEST UNIFORME-------------")
+    print(ks_2samp(data_uni, data_uniform))
 
 
 def testNormal(mu, sigma, n):
     data_norm = norm.rvs(size= n, loc= mu, scale= sigma )
-    #data_normal = np.array([normal(mu, sigma) for u in range(n)])
-    #graph(data_norm, data_normal, False)
+    data_normal = [normal(mu, sigma) for u in range(n)]   
     print("-------------TEST normal-------------")
-    #print("Ks ",kstest(data_normal, 'norm', args=(mu, sigma)))
-    print("Ks ",kstest(data_norm, 'norm', args=(mu, sigma)))
-    #print(normaltest(data_norm))
+    #print(anderson(data_normal, dist='norm')) # Segun Wikipedia este test es el mas "fuerte"
+    #print(shapiro(data_normal))    
+    # - ------ Probados --------l
+    #graph(data_norm, data_normal, False)
+    print(ks_2samp(data_norm, data_normal, alternative='two-sided', mode= 'asymp'))
+    print(kstest(data_normal,'norm', alternative='greater', mode= 'auto',))
+    #print(jarque_bera(data_normal))
+    #print(normaltest(data_normal))
+
+def testPoisson(n, mu):
+    data_poiss   = np.array([poiss(mu) for u in range(n)])
+    data_poisson = np.random.poisson(lam= mu, size= n)
+    print(ks_2samp(data_poiss, data_poisson, alternative='two-sided', mode= 'asymp'))
+    
+    
+
+def testExp(n , l):
+    data_exp   = np.array([exp(1/l) for u in range(n)])
+    data_expon = np.array([random.expovariate(l) for i in range(n)])
+    data_exp = sorted(data_exp)
+    print("-------------TEST EXPON-------------")
+    print("TEST ANDERSON: ", anderson(data_exp, dist= 'expon'))
+    print("KS2: ", ks_2samp(data_exp, data_expon))
+    
+def testBinomial(n, k, p):
+    data_binomial = [binomial(k, p) for u in range(n)]
+    total = 0
+    for d in data_binomial:
+        total += d
+    print(f"Probabilidad de que la distribucion tenga la probabilidad {p}", binom_test(x= total, n= k * n, p= p, alternative='greater'))
+def testEmpirica(n):
+    data_empirica = np.array([empirica() for x in range(n)])
+    f_exp = [273, 37, 195, 9, 124, 58, 62, 151, 47, 44]
+    counter = Counter(data_empirica)
+    sorted_occurrences = list(dict(sorted(counter.items())).values())
+
+    chi_cuadr = chisquare(sorted_occurrences, f_exp)[0]
+    chi_table = stats.chi2.ppf(q = 0.95, df = len(sorted_occurrences) - 1)
+    if chi_cuadr < chi_table:
+        print(f"Chi vale {chi_cuadr} y paso el test")
+    else:
+        print(f"Chi vale {chi_cuadr} y no paso el test")
+
 
 if __name__ == "__main__":
-    #generateUniform(1000000, 0, 10, False)
-    #generateExp(5000, 1, True)
-    #generateNormal(1000000, 10, 2, True)
-    #generateGamma(10000, 1, 2, True)
-    #generatePoisson(1000, 5, False)
-    #generateBinomial(1000, 10, 0.2, False)
-    #generateHypgeo(40, 20, 0.1, 1000000, False)
-    #generatePascal(1000, 2 , 3, False)
-    #generateEmpirica(1000, False)
-    for x in range(10):
-        testUniform(0, 1)
-        #testNormal(0, 1, 1000000)
+    #generateUniform(100000, 0, 10, False)
+    #generateExp(100000, 1, True)
+    #generateNormal(100000, 10, 2, True)
+    #generateGamma(100000, 1, 2, True)
+    #generatePoisson(100000, 8, False)
+    #generateBinomial(100000, 10, 0.2, False)
+    #generateHypgeo(40, 30, 0.1, 100000, False)
+    #generatePascal(100000, 2 , 3, False)
+    #generateEmpirica(100000, False)
+    for x in range(1):
+        #testUniform(0, 1)
+        #testNormal(5, 2, 2000)
+        #testExp(2000, 3)
+        #testBinomial(2000, 10, 0.2)
+        testPoisson(10000, 8)
+        #testEmpirica(1000)
+    
+    
+    
+    
+    #Test normal con GLC
+    #nums = glc(7**5 , (2**31)-1 , 0, 12, 10000)
+    #normalnums = []
+    #for n in nums:
+    #    sum = 0
+    #    for i in range(12):
+    #        r = random.random()
+    #        sum += r
+    #    x = 1 * (sum - 6) + 0
+    #    normalnums.append(x)
+    #graph(None, normalnums, True)
+    #print(normaltest(normalnums))

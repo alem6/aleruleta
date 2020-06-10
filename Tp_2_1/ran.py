@@ -74,12 +74,12 @@ def histogram(n, number_array):
     contadores = []
     for i in intervalos:
         contadores.append(i[2])
-    x_coords = np.arange(len(intervalos)) 
-    plt.bar(x_coords, contadores , color = 'r'  , label = f"FA intervalo")
-    plt.xlabel("Intervalos")
-    plt.ylabel("Frecuencia")
-    plt.legend()
-    plt.show()
+    #x_coords = np.arange(len(intervalos)) 
+    #plt.bar(x_coords, contadores , color = 'r'  , label = f"FA intervalo")
+    #plt.xlabel("Intervalos")
+    #plt.ylabel("Frecuencia")
+    #plt.legend()
+    #plt.show()
     return contadores
 
 def chi(n , contadores):
@@ -96,7 +96,7 @@ def chi(n , contadores):
     chi_cuadr = chi_cuadr / ei
 
     chi_table = stats.chi2.ppf(q = 0.95, df = len(contadores) - 1)
-
+    chi = chisquare(contadores)
     # Evalua
     if chi_cuadr < chi_table:
         print("Paso la prueba de Chi-Cuadrado")
@@ -133,7 +133,7 @@ def monobit(number_array):
     Comienzo del programa principal
 """
 # Declaro variables
-cant_numeros = 1000000
+cant_numeros = 1000
 
 # Genero numeros
 #numeros_glc = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
