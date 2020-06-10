@@ -197,12 +197,13 @@ def testNormal(mu, sigma, n):
     data_norm = norm.rvs(size= n, loc= mu, scale= sigma )
     data_normal = [normal(mu, sigma) for u in range(n)]   
     print("-------------TEST normal-------------")
+    print(ks_2samp(data_norm, data_normal, alternative='two-sided', mode= 'asymp'))
     #print(anderson(data_normal, dist='norm')) # Segun Wikipedia este test es el mas "fuerte"
-    #print(shapiro(data_normal))    
+    #print(shapiro(data_normal))
+        
     # - ------ Probados --------l
     #graph(data_norm, data_normal, False)
-    print(ks_2samp(data_norm, data_normal, alternative='two-sided', mode= 'asymp'))
-    print(kstest(data_normal,'norm', alternative='greater', mode= 'auto',))
+    #print(kstest(data_normal,'norm', alternative='greater', mode= 'auto',))
     #print(jarque_bera(data_normal))
     #print(normaltest(data_normal))
 
@@ -242,22 +243,22 @@ def testEmpirica(n):
 
 
 if __name__ == "__main__":
-    #generateUniform(100000, 0, 10, False)
-    #generateExp(100000, 1, True)
-    #generateNormal(100000, 10, 2, True)
-    #generateGamma(100000, 1, 2, True)
-    #generatePoisson(100000, 8, False)
-    #generateBinomial(100000, 10, 0.2, False)
-    #generateHypgeo(40, 30, 0.1, 100000, False)
-    #generatePascal(100000, 2 , 3, False)
-    #generateEmpirica(100000, False)
+    generateUniform(100000, 0, 10, False)
+    generateExp(100000, 1, True)
+    generateNormal(100000, 10, 2, True)
+    generateGamma(100000, 1, 2, True)
+    generatePoisson(100000, 8, False)
+    generateBinomial(100000, 10, 0.2, False)
+    generateHypgeo(40, 30, 0.1, 100000, False)
+    generatePascal(100000, 2 , 3, False)
+    generateEmpirica(100000, False)
     for x in range(1):
-        #testUniform(0, 1)
-        #testNormal(5, 2, 2000)
-        #testExp(2000, 3)
-        #testBinomial(2000, 10, 0.2)
+        testUniform(0, 1)
+        testNormal(5, 2, 2000)
+        testExp(2000, 3)
+        testBinomial(2000, 10, 0.2)
         testPoisson(10000, 8)
-        #testEmpirica(1000)
+        testEmpirica(1000)
     
     
     
