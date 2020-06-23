@@ -74,12 +74,12 @@ def histogram(n, number_array):
     contadores = []
     for i in intervalos:
         contadores.append(i[2])
-    #x_coords = np.arange(len(intervalos)) 
-    #plt.bar(x_coords, contadores , color = 'r'  , label = f"FA intervalo")
-    #plt.xlabel("Intervalos")
-    #plt.ylabel("Frecuencia")
-    #plt.legend()
-    #plt.show()
+    x_coords = np.arange(len(intervalos)) 
+    plt.bar(x_coords, contadores , color = 'r'  , label = f"FA intervalo")
+    plt.xlabel("Intervalos")
+    plt.ylabel("Frecuencia")
+    plt.legend()
+    plt.show()
     return contadores
 
 def chi(n , contadores):
@@ -133,15 +133,15 @@ def monobit(number_array):
     Comienzo del programa principal
 """
 # Declaro variables
-cant_numeros = 1000
+cant_numeros = 1000000
 
 # Genero numeros
-#numeros_glc = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
+numeros = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
 #numeros_sng = sng(1504, cant_numeros)
-numeros_pyrando = [random.random() for x in range(cant_numeros)]
+#numeros_pyrando = [random.random() for x in range(cant_numeros)]
 
 # Variable a Cambiar depende de que generador queremos testear
-numeros = numeros_pyrando
+#numeros = numeros_pyrando
 
 # Comienzo tests
 contadores = histogram(n = cant_numeros , number_array = numeros )
