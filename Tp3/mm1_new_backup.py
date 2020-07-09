@@ -1,8 +1,5 @@
 import random, math
 from enum import Enum
-from matplotlib import pyplot as plt
-import numpy as np
-import pandas as pd
 
 def expon(mean):
     # Generate a U(0,1) random variable.
@@ -16,48 +13,30 @@ class Queue:
     time_last_event = 0
     queue = []
     dictProbabilities = dict()
-    dictProbabilitiesSystem = dict()
 
     @staticmethod
     def add(time):
         Queue.area_num_in_q += (time - Queue.time_last_event) * len(Queue.queue)
 
-        #For queue
         try:
             Queue.dictProbabilities[len(Queue.queue)] += (time - Queue.time_last_event) 
         except:
             Queue.dictProbabilities[len(Queue.queue)] = (time - Queue.time_last_event)
-
-        if len(Queue.queue) == 0: # 1 persona en el sistema
-            try:
-                Queue.dictProbabilitiesSystem[1] += (time - Server.time_last_update)         
-            except:
-                Queue.dictProbabilitiesSystem[1] = (time - Server.time_last_update)
-        else:
-            try:
-                Queue.dictProbabilitiesSystem[len(Queue.queue) + 1] += (time - Queue.time_last_event)
-            except:
-                Queue.dictProbabilitiesSystem[len(Queue.queue) + 1] = (time - Queue.time_last_event)
-
+        
         Queue.time_last_event = time
         Queue.queue.append(time)
+
 
     @staticmethod
     def remove():
         Queue.area_num_in_q += (Model.time - Queue.time_last_event) * len(Queue.queue)
+        Queue.time_last_event = Model.time
         
         try:
             Queue.dictProbabilities[len(Queue.queue)] += (Model.time - Queue.time_last_event) 
         except:
             Queue.dictProbabilities[len(Queue.queue)] = (Model.time - Queue.time_last_event)
-        
-        try:
-            Queue.dictProbabilitiesSystem[len(Queue.queue) + 1] += (Model.time - Queue.time_last_event)
-        except:
-            Queue.dictProbabilitiesSystem[len(Queue.queue) + 1] = (Model.time - Queue.time_last_event)
 
-        Queue.time_last_event = Model.time
-        
         return Queue.queue.pop(0)
 
 class Server:
@@ -72,24 +51,18 @@ class Server:
             Server.time_last_update = time
             Server.state = state
         else:
-            try:
-                Queue.dictProbabilitiesSystem[0] += (time - Server.time_last_update)         
-            except:
-                Queue.dictProbabilitiesSystem[0] = (time - Server.time_last_update)
-
             Server.time_last_update = time
             Server.state = state
 
 class Model:
     time    = 0
     delays = 0
-    arrayDelays = []
-    arrayServerUsage = []
     server_time_usage = 0
+    lamb    = 0.5
     mu      = 1
-    lamb    = mu * 0.5
+    queue   = [] 
     num_customers_delayed = 0    # Number of clients up to time x
-    custs_delayed_required = 1000 # Maximum number of clients that pass through the system
+    custs_delayed_required = 100000 # Maximum number of clients that pass through the system
 
 class Constants():
     Infinite = 1 * (10 ** 30)
@@ -145,11 +118,11 @@ def arrive(time_arrival):
 
         newDeparture = Event(Events.DEPARTURE, Model.time + expon(Model.mu))
         Model.server_time_usage += newDeparture.time_event - Model.time
-        Model.arrayServerUsage.append(newDeparture.time_event - Model.time)
         NextEvents.addEvent(newDeparture)
         
 
 def departure(time_departure):
+    
     if len(Queue.queue) == 0:
         Server.changeState(False, Model.time) # free server
         NextEvents.departure = Constants.Infinite
@@ -159,63 +132,12 @@ def departure(time_departure):
         time_cust_arrival = Queue.remove() #Return first position of queue and remove it
         Model.num_customers_delayed += 1
         Model.delays += Model.time - time_cust_arrival
-        Model.arrayDelays.append(Model.time - time_cust_arrival)
+        
         #Create departure to arrive retireved
         newDeparture = Event(Events.DEPARTURE, Model.time + expon(Model.mu))
         NextEvents.addEvent(newDeparture)
         Model.server_time_usage += newDeparture.time_event - Model.time
-        Model.arrayServerUsage.append(newDeparture.time_event - Model.time)
 
-def draw(server_utilization):
-    # Diagrama de torta -> Server utilization
-    labels = 'Utilizado', 'Libre'
-    sizes = [server_utilization, 1 - server_utilization]
-    colors = ['gold', 'yellowgreen']
-    # Plot
-    plt.pie(sizes, labels=labels, colors=colors,
-    autopct='%1.1f%%', shadow=True, startangle=140)
-
-    plt.axis('equal')
-    plt.show()
-    # Grafico de barras -> Probailities in queue
-    objects = Queue.dictProbabilities.keys()
-    y_pos = np.arange(len(objects))
-    performance = list(map(lambda x: x / Model.time, Queue.dictProbabilities.values()))
-    
-    
-    plt.bar(y_pos, performance, align='center', alpha=0.5)
-    plt.xticks(y_pos, objects)
-    plt.ylabel('Usage')
-    plt.title('Programming language usage')
-    
-    plt.show()
-    #Stacked chart
-    # Data
-    r = [0]
-    total = 0
-    newArray = []
-    
-    for key in Queue.dictProbabilitiesSystem.keys():
-        total += Queue.dictProbabilitiesSystem[key]
-        newArray.append(total)
-    
-    for a in newArray[::-1]:
-        plt.bar("Personas", a, width = 0.5)
-    
-    plt.show()
-
-    #Time histograms
-
-    plt.hist(Model.arrayDelays, bins = 30, alpha=0.5)
-    plt.ylabel('Frequency')
-    plt.title('Time in queue')
-    
-    plt.show()
-    plt.hist(Model.arrayServerUsage, bins = 30, alpha=0.5)
-    plt.ylabel('Frequency')
-    plt.title('Time in server')
-    
-    plt.show()
 
 def report():
     avg_clients_inq = round(Queue.area_num_in_q / Model.time, 2)
@@ -223,18 +145,26 @@ def report():
 
     avg_time_inq = round(Model.delays / Model.num_customers_delayed,2)
     avg_time_inserver = round(Model.server_time_usage / Model.num_customers_delayed,2)
-    print('Simulation ended', Model.time)
+
     print('Average number in queue: ' + str(avg_clients_inq)) # Promedio de clientes en cola.
     print('Average number in system: ' + str(avg_clients_inq + avg_clients_inserver)) # Promedio de clientes en el sistema.
     print('Average number in server: ' + str(avg_clients_inserver)) # Utilización del servidor
     print('Average delay in queue minutes: ' + str(avg_time_inq)) # Tiempo promedio en cola.
     print('Average time in server minutes: ' + str(avg_time_inserver)) # Tiempo promedio en el servidor
-    print('Average time in system minutes: ' + str(avg_time_inq + avg_time_inserver)) # Tiempo promedio en el sistema
-    print('Probability of n(1) clients in queue: ' + str(round(Queue.dictProbabilities[1] / Model.time, 4))) # Probabilidad de n clientes en cola.
-    # Probabilidad de denegación de servicio (cola finita de tamaño: 0, 2, 5, 10, 50). -> Otro archivo
-    draw( avg_clients_inserver )
-  
-
+    print('Average time in system minutes: ' + str(avg_time_inq + avg_time_inserver))
+    print('Probability of 4 clients in queue' , probability(4))
+    total = 0
+    for key in Queue.dictProbabilities:
+        total += Queue.dictProbabilities[key] / Model.time
+        print('Key: ' + str(key) + " : " + str(round(Queue.dictProbabilities[key] / Model.time,2)))
+    print(math.fsum(Queue.dictProbabilities.values())/ Model.time)
+    print('0 en cola', probability(2))
+    # Probabilidad de n clientes en cola.
+    # Probabilidad de denegación de servicio (cola finita de tamaño: 0, 2, 5, 10, 50).
+    #   Tiempo promedio del sistema = tiempo promedio en cola + tiempo promedio en el servidor
+    #   Cant de clientes promedio en el sistema = cantidad de clientes promedio en cola + cant de clientes promedio en servidor
+    # p = lamb / mu --> server utilization
+    
 if __name__ == "__main__":
 
     while(Model.num_customers_delayed < Model.custs_delayed_required):
@@ -246,13 +176,5 @@ if __name__ == "__main__":
 
         elif nextEvent[1] == Events.DEPARTURE:
             departure(nextEvent[0])
-    report()    
-
-    
-    
-    # Stack chart cantidad de gente en sistema (probabilidad)
-    # histograma tiempo (servidor, sistem, cola)
-
-
-    
-    
+        
+    report()
