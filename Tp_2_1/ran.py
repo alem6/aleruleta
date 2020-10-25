@@ -28,9 +28,7 @@ def glc(a, m, c, seed, n):
 
 def sng(seed , iteraciones):#Square Number Generator
     """
-
         Number debe ser un numero de 4 digitos
-
     """
     random_numbers = []
     x_i = seed
@@ -52,7 +50,7 @@ def histogram(n, number_array):
     """
     Genera el histograma de frecuencia
     """
-    m = int(sqrt(n))
+    m = 1000#int(sqrt(n))
     longitud_intervalo = 1 / m
 
     intervalos = []
@@ -136,8 +134,8 @@ def monobit(number_array):
 cant_numeros = 1000000
 
 # Genero numeros
-numeros = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
-#numeros_sng = sng(1504, cant_numeros)
+#numeros = glc(7**5 , (2**31)-1 , 0, 12, cant_numeros) # a , m , seed
+numeros = sng(2222, cant_numeros)
 #numeros_pyrando = [random.random() for x in range(cant_numeros)]
 
 # Variable a Cambiar depende de que generador queremos testear

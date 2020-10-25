@@ -60,13 +60,41 @@ class Model:
     time    = 0
     delays = 0
     server_time_usage = 0
-    lamb    = 0.5
     mu      = 1
+    lamb    = mu * 0.25
     limit = 50
     denied = 0
     Overflow = False
     num_customers_delayed = 0    # Number of clients up to time x
-    custs_delayed_required = 100000 # Maximum number of clients that pass through the system
+    custs_delayed_required = 10000 # Maximum number of clients that pass through the system
+
+    @staticmethod
+    def clean():
+        #Clean model
+        Model.time = 0
+        Model.delays = 0
+        Model.arrayDelays = []
+        Model.arrayServerUsage = []
+        Model.server_time_usage = 0
+        Model.num_customers_delayed = 0
+        Model.Overflow = False
+
+        #Clean server
+        Server.area_num_in_server = 0
+        Server.time_last_update = 0
+        Server.state = False
+
+        #Clean queue
+        Queue.area_num_in_q = 0
+        Queue.time_last_event = 0
+        Queue.queue = []
+        Queue.dictProbabilities = dict()
+        Queue.dictProbabilitiesSystem = dict()
+
+        #Clean nextEvents
+        NextEvents.arrive = expon(Model.lamb)
+        NextEvents.departure =  Constants.Infinite 
+        NextEvents.listEvents = []
 
 class Constants():
     Infinite = 1 * (10 ** 30)
@@ -166,7 +194,7 @@ def report():
 
 if __name__ == "__main__":
     for x in range(100):
-        Model.Overflow = False
+        Model.clean()
 
         while((Model.num_customers_delayed < Model.custs_delayed_required) and not Model.Overflow):
             nextEvent = NextEvents.getNextEvent()

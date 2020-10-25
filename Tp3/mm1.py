@@ -10,6 +10,17 @@ def expon(mean):
 
     # Return an exponential random variable with mean "mean".
     return - (1 / mean) * math.log(u)
+    
+class Stats():
+    numbers_inq = []
+    numbers_inserver = []
+    numbers_insystem = []
+    times_inq = []
+    times_inserver = []
+    times_insystem = []
+    server_utilizations = []
+    probabilities = []
+    times_ended = [] 
 
 class Queue:
     area_num_in_q = 0
@@ -68,7 +79,6 @@ class Server:
     @staticmethod
     def changeState(state, time):
         if Server.state:
-            Server.area_num_in_server += (time - Server.time_last_update) * 1
             Server.time_last_update = time
             Server.state = state
         else:
@@ -87,9 +97,37 @@ class Model:
     arrayServerUsage = []
     server_time_usage = 0
     mu      = 1
-    lamb    = mu * 0.5
+    lamb    = mu * 1.25
     num_customers_delayed = 0    # Number of clients up to time x
-    custs_delayed_required = 1000 # Maximum number of clients that pass through the system
+    custs_delayed_required = 10000 # Maximum number of clients that pass through the system
+
+    @staticmethod
+    def clean():
+        #Clean model
+        Model.time = 0
+        Model.delays = 0
+        Model.arrayDelays = []
+        Model.arrayServerUsage = []
+        Model.server_time_usage = 0
+        Model.num_customers_delayed = 0
+
+        #Clean server
+        Server.area_num_in_server = 0
+        Server.time_last_update = 0
+        Server.state = False
+
+        #Clean queue
+        Queue.area_num_in_q = 0
+        Queue.time_last_event = 0
+        Queue.queue = []
+        Queue.dictProbabilities = dict()
+        Queue.dictProbabilitiesSystem = dict()
+
+        #Clean nextEvents
+        NextEvents.arrive = expon(Model.lamb)
+        NextEvents.departure =  Constants.Infinite 
+        NextEvents.listEvents = []
+        
 
 class Constants():
     Infinite = 1 * (10 ** 30)
@@ -167,92 +205,125 @@ def departure(time_departure):
         Model.arrayServerUsage.append(newDeparture.time_event - Model.time)
 
 def draw(server_utilization):
+    #Time histograms
+    fig, axs = plt.subplots(3, 2)
+
+    axs[0,0].hist(Model.arrayDelays, bins = 30)
+    axs[0,0].set_ylabel('Frecuencia')
+    axs[0,0].set_xlabel('Tiempo')
+    axs[0,0].set_title('Tiempo en cola')    
+    
+    axs[0,1].hist(Model.arrayServerUsage, bins = 30)
+    axs[0,1].set_ylabel('Frecuencia')
+    axs[0,1].set_xlabel('Tiempo')
+    axs[0,1].set_title('Tiempo en servidor')
+
+
+    #Stacked chart
+    # Data
+    r = [0]
+    total = 0
+    cumulativeProbabilities = []
+    array = []
+
+    #Cumulative probability
+    for key in Queue.dictProbabilitiesSystem.keys():
+        total += Queue.dictProbabilitiesSystem[key]
+        cumulativeProbabilities.append(total)
+    
+    #We only keep the first values
+    array += cumulativeProbabilities[0:5]
+    array.append(cumulativeProbabilities[-1])
+
+    for index, a in enumerate(array[::-1]):
+        aux = (len(array) - index) - 1 if a != array[-1] else "+" + str(len(array))
+        axs[1,1].bar(" ", a, width = 0.5, label=f"{aux} Clientes en sistema")
+    
+    axs[1,1].set_ylabel('Tiempo')
+    axs[1,1].legend()
+
+    # Grafico de barras -> Probabilities in queue
+    objects = Queue.dictProbabilities.keys()
+    y_pos = np.arange(len(objects))
+    performance = list(map(lambda x: x / Model.time, Queue.dictProbabilities.values()))
+    
+    axs[1,0].bar(y_pos, performance, align='center', alpha=0.5)
+    axs[1,0].set_xticks(y_pos, objects)
+    axs[1,0].set_ylabel('Probabilidad de n')
+    axs[1,0].set_xlabel('Clientes')
+
     # Diagrama de torta -> Server utilization
     labels = 'Utilizado', 'Libre'
     sizes = [server_utilization, 1 - server_utilization]
     colors = ['gold', 'yellowgreen']
     # Plot
-    plt.pie(sizes, labels=labels, colors=colors,
+    axs[2,0].pie(sizes, labels=labels, colors=colors,
     autopct='%1.1f%%', shadow=True, startangle=140)
 
-    plt.axis('equal')
-    plt.show()
-    # Grafico de barras -> Probailities in queue
-    objects = Queue.dictProbabilities.keys()
-    y_pos = np.arange(len(objects))
-    performance = list(map(lambda x: x / Model.time, Queue.dictProbabilities.values()))
-    
-    
-    plt.bar(y_pos, performance, align='center', alpha=0.5)
-    plt.xticks(y_pos, objects)
-    plt.ylabel('Usage')
-    plt.title('Programming language usage')
-    
-    plt.show()
-    #Stacked chart
-    # Data
-    r = [0]
-    total = 0
-    newArray = []
-    
-    for key in Queue.dictProbabilitiesSystem.keys():
-        total += Queue.dictProbabilitiesSystem[key]
-        newArray.append(total)
-    
-    for a in newArray[::-1]:
-        plt.bar("Personas", a, width = 0.5)
-    
     plt.show()
 
-    #Time histograms
-
-    plt.hist(Model.arrayDelays, bins = 30, alpha=0.5)
-    plt.ylabel('Frequency')
-    plt.title('Time in queue')
-    
-    plt.show()
-    plt.hist(Model.arrayServerUsage, bins = 30, alpha=0.5)
-    plt.ylabel('Frequency')
-    plt.title('Time in server')
-    
-    plt.show()
-
-def report():
+def report(flag):
+    #Average clients in queue and server
     avg_clients_inq = round(Queue.area_num_in_q / Model.time, 2)
-    avg_clients_inserver = round(Server.area_num_in_server / Model.time, 2)
+    avg_clients_inserver = round(Model.server_time_usage / Model.time, 2)#Server.area_num_in_server
 
+    #Average time in queue and server
     avg_time_inq = round(Model.delays / Model.num_customers_delayed,2)
     avg_time_inserver = round(Model.server_time_usage / Model.num_customers_delayed,2)
+
+
     print('Simulation ended', Model.time)
+    Stats.times_ended.append(Model.time)
+    
     print('Average number in queue: ' + str(avg_clients_inq)) # Promedio de clientes en cola.
+    Stats.numbers_inq.append(avg_clients_inq)
+    
     print('Average number in system: ' + str(avg_clients_inq + avg_clients_inserver)) # Promedio de clientes en el sistema.
+    Stats.numbers_insystem.append(avg_clients_inq + avg_clients_inserver)
+    
     print('Average number in server: ' + str(avg_clients_inserver)) # Utilización del servidor
+    Stats.numbers_inserver.append(avg_clients_inserver)
+    
     print('Average delay in queue minutes: ' + str(avg_time_inq)) # Tiempo promedio en cola.
+    Stats.times_inq.append(avg_time_inq)
+    
     print('Average time in server minutes: ' + str(avg_time_inserver)) # Tiempo promedio en el servidor
+    Stats.times_inserver.append(avg_time_inserver)
+    
     print('Average time in system minutes: ' + str(avg_time_inq + avg_time_inserver)) # Tiempo promedio en el sistema
+    Stats.times_insystem.append(avg_time_inq + avg_time_inserver)
+    
     print('Probability of n(1) clients in queue: ' + str(round(Queue.dictProbabilities[1] / Model.time, 4))) # Probabilidad de n clientes en cola.
+    Stats.probabilities.append(round(Queue.dictProbabilities[1] / Model.time, 4))
+    
     # Probabilidad de denegación de servicio (cola finita de tamaño: 0, 2, 5, 10, 50). -> Otro archivo
-    draw( avg_clients_inserver )
-  
+    if flag:
+        draw( avg_clients_inserver )
+    
+def finalReport():
+    print('Average of times the simulation ended": ', round(sum(Stats.times_ended) / len(Stats.times_ended), 2))
+    print('Average of "Average number in queue": ', round(sum(Stats.numbers_inq) / len(Stats.numbers_inq), 2))
+    print('Average of "Average number in system": ', round(sum(Stats.numbers_insystem) / len(Stats.numbers_insystem), 2))
+    print('Average of "Average server utilization": ', round(sum(Stats.numbers_inserver) / len(Stats.numbers_inserver), 2))
+    print('Average of "Average delay in queue minutes": ', round(sum(Stats.times_inq) / len(Stats.times_inq), 2))
+    print('Average of "Average time in server', round(sum(Stats.times_inserver)/len(Stats.times_inserver),2)) 
+    print('Average of "Average time in system minutes": ', round(sum(Stats.times_insystem) / len(Stats.times_insystem),2))
+    print('Average of "probability of n(1) clients in queue": ', round(sum(Stats.probabilities)/len(Stats.probabilities),2))
 
 if __name__ == "__main__":
+    for x in range(10):
+        while(Model.num_customers_delayed < Model.custs_delayed_required):
+            nextEvent = NextEvents.getNextEvent()
+            Model.time = nextEvent[0] 
 
-    while(Model.num_customers_delayed < Model.custs_delayed_required):
-        nextEvent = NextEvents.getNextEvent()
-        Model.time = nextEvent[0] 
+            if nextEvent[1] == Events.ARRIVE:
+                arrive(nextEvent[0])
+
+            elif nextEvent[1] == Events.DEPARTURE:
+                departure(nextEvent[0])
+            Server.area_num_in_server += (Model.time - Server.time_last_update) * (1 if Server.state else 0)
+        report(True if x == 0 else False)
+        Model.clean()
         
-        if nextEvent[1] == Events.ARRIVE:
-            arrive(nextEvent[0])
-
-        elif nextEvent[1] == Events.DEPARTURE:
-            departure(nextEvent[0])
-    report()    
-
-    
-    
-    # Stack chart cantidad de gente en sistema (probabilidad)
-    # histograma tiempo (servidor, sistem, cola)
-
-
-    
-    
+    finalReport()
+        
